@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ChangePasswordRecoverScreen = () => {
+const ChangePasswordRecoverPage = () => {
     const [code, setCode] = useState(["", "", "", "", ""]);
 
     return (
@@ -33,4 +33,4 @@ const ChangePasswordRecoverScreen = () => {
     );
 };
 
-export default ChangePasswordRecoverScreen;
+export default ChangePasswordRecoverPage;
