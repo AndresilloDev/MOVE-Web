@@ -4,6 +4,7 @@ import UsersScreen from "./screens/UsersScreen";
 import SensorCard from "./components/SensorCard";
 import ChangePasswordRecoverScreen from "./screens/ChangePasswordRecoverScreen";
 import ClassroomsPage from "./pages/ClassroomsPage"; 
+import NotificationsPage from "./pages/NotificationsPage"; 
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
                     <Route path="/" element={<UsersScreen />} />
                     <Route path="/recover-password" element={<ChangePasswordRecoverScreen />} />
                     <Route path="/classrooms" element={<ClassroomsPage />} /> 
+                    <Route path="/notifications" element={<NotificationsPage />} /> 
                 </Routes>
             </div>
         </Router>
