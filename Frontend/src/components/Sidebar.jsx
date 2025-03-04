@@ -16,7 +16,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`fixed left-0 top-1/2 transform -translate-y-1/2 h-2/3 ${
+      className={`fixed left-0 top-1/2 transform -translate-y-1/2 h-1.5/3 ${
         isOpen ? "w-64" : "w-16"
       } bg-[#F8F8FF] shadow-lg flex flex-col rounded-r-3xl py-6 transition-all duration-300`}
     >
