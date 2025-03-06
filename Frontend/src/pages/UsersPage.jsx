@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { FaHome, FaChevronRight, FaSearch, FaEdit, FaTrash, FaPlus, FaTimes } from "react-icons/fa";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
 
 const UsersPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -66,6 +68,8 @@ const UsersPage = () => {
 
     return (
         <div className="relative min-h-screen bg-cover bg-center" style={{backgroundImage: "url('/bg.png')"}}>
+            <Sidebar />
+            <Header />
             <div className="m-4 ml-6 flex items-center">
                 <FaHome className="mr-2" size={25}/>
                 <FaChevronRight className="mr-2" size={25}/>
