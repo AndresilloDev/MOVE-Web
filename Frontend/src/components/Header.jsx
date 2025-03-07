@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import ButtonBox from './ButtonBox';
 
 const Header = ({ isLoggedIn }) => {
     const navigate = useNavigate();
@@ -11,12 +12,8 @@ const Header = ({ isLoggedIn }) => {
             </div>
             <div className="auth">
                 {!isLoggedIn && (
-                    <button 
-                        className="bg-action-primary hover:bg-action-hover text-text-primary px-4 py-2 rounded-md border border-lines cursor-pointer"
-                        onClick={() => navigate('/login')}
-                    >
-                        Iniciar Sesión
-                    </button>
+                    <ButtonBox text="Iniciar Sesión" to="/login" width="150px" height="40px" borderRadius="lg" />
+
                 )}
             </div>
         </div>
