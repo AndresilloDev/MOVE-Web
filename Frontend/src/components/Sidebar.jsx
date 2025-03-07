@@ -1,36 +1,40 @@
 import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import ApartmentIcon from "@mui/icons-material/Apartment";
-import PeopleIcon from "@mui/icons-material/People";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import DeveloperBoardOutlinedIcon from '@mui/icons-material/DeveloperBoardOutlined';
+import { Tooltip } from "react-tooltip"; 
+import "react-tooltip/dist/react-tooltip.css"; 
 
-export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
+// Lista de elementos del menú
+const menuItems = [
+  { icon: DeveloperBoardOutlinedIcon, name: "Dispositivos" },
+  { icon: ApartmentIcon, name: "Docencias" },
+  { icon: PeopleAltOutlinedIcon, name: "Usuarios" },
+  { icon: NotificationsNoneOutlinedIcon, name: "Notificaciones" },
+];
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
+export default function Sidebar({ isOpen, toggleSidebar }) {
   return (
     <div
-      className={`fixed left-0 top-1/2 transform -translate-y-1/2 h-1.5/3 ${
+      className={`fixed left-0 top-1/2 transform -translate-y-1/2 h-auto ${
         isOpen ? "w-64" : "w-16"
       } bg-[#F8F8FF] shadow-lg flex flex-col rounded-r-3xl py-6 transition-all duration-300`}
     >
+      {/* Botón para abrir/cerrar */}
       <button
         onClick={toggleSidebar}
-        className="absolute top-6 right-[-10px] bg-white p-1 rounded-full shadow-md border border-gray-300 hover:bg-gray-200"
+        className="absolute top-6 -right-5 bg-white p-1 rounded-full shadow-md border border-gray-300 hover:bg-gray-200 cursor-pointer"
       >
         <FaAngleRight
-          className={`transition-transform duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
+          className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
         />
       </button>
 
+      {/* Imagen de usuario */}
       <div className="flex justify-center items-center mb-4">
         <img
           src="https://randomuser.me/api/portraits/men/1.jpg"
@@ -39,36 +43,54 @@ export default function Sidebar() {
         />
       </div>
 
+      {/* Menú de navegación */}
       <nav className="flex flex-col">
         {menuItems.map((item, index) => (
           <div
             key={index}
             className="flex items-center w-full h-12 cursor-pointer hover:bg-gray-200 px-4"
           >
-            <item.icon className="text-gray-700 text-3xl" />
-            {isOpen && <span className="ml-4 text-gray-700">{item.name}</span>}
+            <item.icon 
+              className="text-gray-600 text-3xl"
+              data-tooltip-id="sidebar-tooltip"
+              data-tooltip-content={item.name} 
+            />
+            <span className={`ml-4 text-gray-700 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>
+              {item.name}
+            </span>
           </div>
         ))}
       </nav>
 
       <div className="flex-grow"></div>
 
+      {/* Perfil */}
       <div className="flex items-center w-full h-12 cursor-pointer hover:bg-gray-200 px-4">
-        <AccountCircleIcon className="text-gray-700 text-4xl" />
-        {isOpen && <span className="ml-4 text-gray-700">Perfil</span>}
+        <AccountCircleOutlinedIcon 
+          className="text-gray-600 text-4xl"
+          data-tooltip-id="sidebar-tooltip" 
+          data-tooltip-content="Perfil" 
+        />
+        <span className={`ml-4 text-gray-700 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>Perfil</span>
       </div>
 
+      {/* Cerrar sesión */}
       <div className="flex items-center w-full h-12 cursor-pointer hover:bg-gray-200 px-4 border-t">
-        <ExitToAppIcon className="text-gray-700 text-4xl" />
-        {isOpen && <span className="ml-4 text-gray-700">Cerrar sesión</span>}
+        <ExitToAppOutlinedIcon 
+          className="text-gray-600 text-4xl"
+          data-tooltip-id="sidebar-tooltip" 
+          data-tooltip-content="Cerrar sesión" 
+        />
+        <span className={`ml-4 text-gray-700 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>Cerrar sesión</span>
       </div>
+
+      <Tooltip
+        id="sidebar-tooltip"
+        className="!bg-[#DEFF35] !text-black !rounded-md !px-3 !py-2 !text-sm !shadow-lg"
+        place="right" 
+        delayShow={300} 
+        delayHide={100} 
+      />
     </div>
   );
 }
-
-const menuItems = [
-  { icon: DashboardIcon, name: "Dispositivos" },
-  { icon: ApartmentIcon, name: "Docencias" },
-  { icon: PeopleIcon, name: "Usuarios" },
-  { icon: NotificationsIcon, name: "Notificaciones" },
-];

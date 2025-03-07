@@ -2,6 +2,8 @@ import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Header from "../components/Header"; 
+import Sidebar from "../components/Sidebar"; 
 
 const datos = [
   { fecha: "2025-01-30 11:30:56", dispositivo: "#246568", nombre: "D4 - CC11", sensor: "Temperatura" },
@@ -18,7 +20,11 @@ const datos = [
 export default function NotificationsPage() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sidebarOpen, setSidebarOpen] = useState(false); 
+  const isLoggedIn = true; 
   const itemsPerPage = 5;
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen); 
 
   const filteredData = datos.filter(item =>
     item.nombre.toLowerCase().includes(search.toLowerCase()) ||
@@ -44,8 +50,18 @@ export default function NotificationsPage() {
 
   return (
     <div className="relative w-full min-h-screen bg-white overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
-      <div className="relative z-10">
-        <div className="flex justify-start p-4 w-full">
+      {/* Header */}
+      <div className="w-full">
+        <Header isLoggedIn={isLoggedIn} />
+      </div>
+
+      {/* Sidebar */}
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+
+      {/* Contenido principal */}
+      <div className={`relative z-10 p-6 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-16"}`}>
+        {/* Barra de búsqueda */}
+        <div className="flex justify-start p-4 w-full mt-2">
           <div className="flex items-center bg-white border border-gray-300 rounded-full overflow-hidden shadow-md w-1/2">
             <input
               type="text"
@@ -59,12 +75,13 @@ export default function NotificationsPage() {
             </button>
           </div>
         </div>
-      
-        <div className="mt-6"> 
+
+        {/* Tabla de notificaciones */}
+        <div className="mt-8">
           <table className="w-full border-collapse text-left">
             <thead>
               <tr>
-                <th className="px-4 py-2 border-b border-black">Fecha</th> 
+                <th className="px-4 py-2 border-b border-black">Fecha</th>
                 <th className="px-4 py-2 border-b border-black">Dispositivo</th>
                 <th className="px-4 py-2 border-b border-black">Nombre</th>
                 <th className="px-4 py-2 border-b border-black">Sensor</th>
@@ -74,7 +91,7 @@ export default function NotificationsPage() {
             <tbody>
               {paginatedData.map((item, index) => (
                 <tr key={index}>
-                  <td className="px-4 py-2 border-b border-black">{item.fecha}</td> 
+                  <td className="px-4 py-2 border-b border-black">{item.fecha}</td>
                   <td className="px-4 py-2 border-b border-black">{item.dispositivo}</td>
                   <td className="px-4 py-2 border-b border-black">{item.nombre}</td>
                   <td className="px-4 py-2 border-b border-black">{item.sensor}</td>
@@ -89,10 +106,11 @@ export default function NotificationsPage() {
           </table>
         </div>
 
-        <div className="flex justify-end mt-4 space-x-2 text-black">
-          <button 
-            className="px-2 py-1" 
-            onClick={handlePrevious} 
+        {/* Paginación */}
+        <div className="flex justify-end mt-8 space-x-2 text-black">
+          <button
+            className="px-2 py-1"
+            onClick={handlePrevious}
             disabled={currentPage === 1}
           >
             <ChevronLeftIcon />
@@ -108,9 +126,9 @@ export default function NotificationsPage() {
               {i + 1}
             </button>
           ))}
-          <button 
-            className="px-2 py-1" 
-            onClick={handleNext} 
+          <button
+            className="px-2 py-1"
+            onClick={handleNext}
             disabled={currentPage === totalPages}
           >
             <ChevronRightIcon />
