@@ -10,7 +10,7 @@ const InputBox = ({ type, label, translateX = "-1.25rem" }) => {
     };
 
     return (
-        <label className={`relative ${isFocused || isFilled ? 'focused' : ''}`} style={{ width: '100%', maxWidth: '350px' }}>
+        <label className={`relative ${isFocused || isFilled ? 'focused' : ''}`} style={{ width: '100%'}}>
             <input
                 type={type}
                 placeholder={label}
