@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
 
 import MainLayout from "../components/layout/MainLayout";
 import HeaderOnlyLayout from "../components/layout/HeaderOnly";
@@ -20,31 +21,42 @@ import NotificationsPage from "../pages/NotificationsPage";
 import FiledNotificationsPage from "../pages/FiledNotificationsPage";
 import SelectedNotificationPage from "../pages/SelectedNotificationPage";
 
+import NotFoundPage from "../pages/404Page";
+
 export const AppRouter = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
     return (
         <Routes>
-            <Route element={<HeaderOnlyLayout />}>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage/>} />
-                <Route path="/recover-account" element={ <RecoverAccountPage/> } />
-                <Route path="/recover-password" element={<ChangePasswordRecoverPage />} />
-            </Route>
-            <Route element={<MainLayout/>}>
+            <Route element={isLoggedIn ? <MainLayout /> : <HeaderOnlyLayout />}>
                 <Route path="/" element={<HomePage />} />
 
-                <Route path="devices" element={<DevicesPage/>} />
-                <Route path="device/:id" element={<SelectedDevicePage/>}/>
+                {isLoggedIn && (
+                    <>
+                        <Route path="devices" element={<DevicesPage />} />
+                        <Route path="device/:id" element={<SelectedDevicePage />} />
 
-                <Route path="buildings" element={<BuildingsPage/>}/>
-                <Route path="/classrooms" element={<ClassroomsPage />} />
+                        <Route path="buildings" element={<BuildingsPage />} />
+                        <Route path="/classrooms" element={<ClassroomsPage />} />
 
-                <Route path="/users" element={<UsersPage />} />
+                        <Route path="/users" element={<UsersPage />} />
 
-                <Route path="/notifications" element={<NotificationsPage />} />
-                <Route path="/filed-notifications" element={<FiledNotificationsPage/>}/>
-                <Route path="/notification/:id" element={<SelectedNotificationPage/>} />
+                        <Route path="/notifications" element={<NotificationsPage />} />
+                        <Route path="/filed-notifications" element={<FiledNotificationsPage />} />
+                        <Route path="/notification/:id" element={<SelectedNotificationPage />} />
+                    </>
+                )}
 
+                {!isLoggedIn && (
+                    <>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/recover-account" element={<RecoverAccountPage />} />
+                        <Route path="/recover-password" element={<ChangePasswordRecoverPage />} />
+                    </>
+                )}
+                
+                <Route path="*" element={<NotFoundPage />} />
             </Route>
         </Routes>
-    )
-}
+    );
+};
