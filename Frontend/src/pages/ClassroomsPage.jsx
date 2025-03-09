@@ -4,8 +4,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import { Modal, Box, TextField, Button } from "@mui/material";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
 
 const aulasData = [
   { nombre: "CC11", dispositivos: 1 },
@@ -25,10 +23,8 @@ export default function ClassroomsPage() {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedAula, setSelectedAula] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const isLoggedIn = true;
 
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const handleCloseEditModal = () => setOpenEditModal(false);
   const handleCloseAddModal = () => setOpenAddModal(false);
@@ -42,7 +38,7 @@ export default function ClassroomsPage() {
     <div className="relative w-full min-h-screen bg-white overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
       <Header isLoggedIn={isLoggedIn} />
 
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar/>
 
       <div className={`relative z-10 p-6 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-16"}`}>
         <div className="flex justify-start p-4 w-full mt-2">

@@ -17,11 +17,15 @@ const menuItems = [
   { icon: NotificationsNoneOutlinedIcon, name: "Notificaciones" },
 ];
 
-export default function Sidebar({ isOpen, toggleSidebar }) {
+
+export default function Sidebar() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  
   return (
     <div
       className={`fixed left-0 top-1/2 transform -translate-y-1/2 h-auto ${
-        isOpen ? "w-64" : "w-16"
+        sidebarOpen ? "w-64" : "w-16"
       } bg-[#F8F8FF] shadow-lg flex flex-col rounded-r-3xl py-6 transition-all duration-300`}
     >
       {/* Botón para abrir/cerrar */}
@@ -30,7 +34,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         className="absolute top-6 -right-5 bg-white p-1 rounded-full shadow-md border border-gray-300 hover:bg-gray-200 cursor-pointer"
       >
         <FaAngleRight
-          className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}
+          className={`transition-transform duration-300 ${sidebarOpen ? "rotate-180" : "rotate-0"}`}
         />
       </button>
 
@@ -55,7 +59,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
               data-tooltip-id="sidebar-tooltip"
               data-tooltip-content={item.name} 
             />
-            <span className={`ml-4 text-gray-700 transition-opacity duration-300 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>
+            <span className={`ml-4 text-gray-700 transition-opacity duration-300 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>
               {item.name}
             </span>
           </div>
@@ -71,7 +75,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           data-tooltip-id="sidebar-tooltip" 
           data-tooltip-content="Perfil" 
         />
-        <span className={`ml-4 text-gray-700 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>Perfil</span>
+        <span className={`ml-4 text-gray-700 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Perfil</span>
       </div>
 
       {/* Cerrar sesión */}
@@ -81,7 +85,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
           data-tooltip-id="sidebar-tooltip" 
           data-tooltip-content="Cerrar sesión" 
         />
-        <span className={`ml-4 text-gray-700 ${isOpen ? "opacity-100" : "opacity-0 hidden"}`}>Cerrar sesión</span>
+        <span className={`ml-4 text-gray-700 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Cerrar sesión</span>
       </div>
 
       <Tooltip

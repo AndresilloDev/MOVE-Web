@@ -2,8 +2,8 @@ import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import Header from "../components/Header"; 
-import Sidebar from "../components/Sidebar"; 
+import Header from "../components/layout/Header"; 
+import Sidebar from "../components/layout/Sidebar"; 
 
 const datos = [
   { fecha: "2025-01-30 11:30:56", dispositivo: "#246568", nombre: "D4 - CC11", sensor: "Temperatura" },
