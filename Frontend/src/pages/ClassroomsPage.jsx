@@ -35,12 +35,8 @@ export default function ClassroomsPage() {
   );
 
   return (
-    <div className="relative w-full min-h-screen bg-white overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
-      <Header isLoggedIn={isLoggedIn} />
-
-      <Sidebar/>
-
-      <div className={`relative z-10 p-6 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-16"}`}>
+    <div className="relative w-full min-h-screen overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
+      <div className={`relative z-10 p-6 transition-all duration-300`}>
         <div className="flex justify-start p-4 w-full mt-2">
           <div className="flex items-center bg-white border border-gray-300 rounded-full overflow-hidden shadow-md w-1/2">
             <input

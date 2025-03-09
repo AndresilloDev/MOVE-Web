@@ -2,8 +2,6 @@ import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import Header from "../components/layout/Header"; 
-import Sidebar from "../components/layout/Sidebar"; 
 
 const datos = [
   { fecha: "2025-01-30 11:30:56", dispositivo: "#246568", nombre: "D4 - CC11", sensor: "Temperatura" },
@@ -20,11 +18,7 @@ const datos = [
 export default function NotificationsPage() {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sidebarOpen, setSidebarOpen] = useState(false); 
-  const isLoggedIn = true; 
   const itemsPerPage = 5;
-
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen); 
 
   const filteredData = datos.filter(item =>
     item.nombre.toLowerCase().includes(search.toLowerCase()) ||
@@ -49,17 +43,10 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-white overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
-      {/* Header */}
-      <div className="w-full">
-        <Header isLoggedIn={isLoggedIn} />
-      </div>
-
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+    <div className="relative w-full min-h-screen overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
 
       {/* Contenido principal */}
-      <div className={`relative z-10 p-6 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-16"}`}>
+      <div className={`relative z-10 p-6 transition-all duration-300`}>
         {/* Barra de búsqueda */}
         <div className="flex justify-start p-4 w-full mt-2">
           <div className="flex items-center bg-white border border-gray-300 rounded-full overflow-hidden shadow-md w-1/2">
