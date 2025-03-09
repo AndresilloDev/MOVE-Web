@@ -24,7 +24,7 @@ import SelectedNotificationPage from "../pages/SelectedNotificationPage";
 import NotFoundPage from "../pages/404Page";
 
 export const AppRouter = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return (
         <Routes>
