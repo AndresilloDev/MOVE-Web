@@ -1,5 +1,65 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Helvetica-Regular';
+  src: url('./assets/fonts/Helveltica/Helvetica.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* "font-['Helvetica-Regular']" */
+
+@font-face {
+  font-family: 'Helvetica-Bold';
+  src: url('./assets/fonts/Helveltica/Helvetica-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* "font-['Helvetica-Bold']" */
+
+@font-face {
+  font-family: 'Helvetica-Light';
+  src: url('./assets/fonts/Helveltica/helvetica-light-587ebe5a59211.ttf') format('truetype');
+  font-weight: 300; 
+  font-style: normal;
+}
+
+/* "font-['Helvetica-Light']" */
+
+@font-face {
+  font-family: 'UNCAGE-Regular';
+  src: url('./assets/fonts/Uncage/UNCAGE-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* "font-['UNCAGE-Regular']" */
+
+@font-face {
+  font-family: 'UNCAGE-Medium';
+  src: url('./assets/fonts/Uncage/UNCAGE-Medium.ttf') format('truetype');
+  font-weight: 500; 
+  font-style: normal;
+}
+
+/* "font-['UNCAGE-Medium']" */
+
+@font-face {
+  font-family: 'UNCAGE-Bold';
+  src: url('./assets/fonts/Uncage/UNCAGE-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* "font-['UNCAGE-Bold']" */
+
+@layer base {
+  body {
+    @apply font-['Helvetica-Regular'];
+  }
+}
+
 @theme {
   --color-header: #FFFFFF;
   --color-lines: #D9D9D9;
