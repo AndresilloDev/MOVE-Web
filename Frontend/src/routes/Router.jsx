@@ -37,7 +37,7 @@ export const AppRouter = () => {
                         <Route path="device/:id" element={<SelectedDevicePage />} />
 
                         <Route path="buildings" element={<BuildingsPage />} />
-                        <Route path="/classrooms" element={<ClassroomsPage />} />
+                        <Route path="/classrooms/:id" element={<ClassroomsPage />} />
 
                         <Route path="/users" element={<UsersPage />} />
 

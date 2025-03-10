@@ -1,4 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 const BuildingCard = ({ building }) => {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/classrooms/${building._id}`)
+    }
+
     return (
         <>
             <div className="
@@ -7,7 +15,9 @@ const BuildingCard = ({ building }) => {
                 bg-white 
                 text-black text-xl
                 border rounded-lg  border-secondary
-                p-4"
+                p-4
+                cursor-pointer"
+                onClick={handleClick}
             >
                 <div className= "flex flex-row">
                     <p className="mr-1 font-bold">Nombre: </p>
