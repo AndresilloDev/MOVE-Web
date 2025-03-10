@@ -24,9 +24,9 @@ export default function Sidebar() {
   
   return (
     <div
-      className={`fixed left-0 top-1/2 transform -translate-y-1/2 h-auto ${
+      className={`fixed left-0 top-1/2 transform -translate-y-1/2 h-auto z-50 ${
         sidebarOpen ? "w-64" : "w-16"
-      } bg-[#F8F8FF] shadow-lg flex flex-col rounded-r-3xl py-6 transition-all duration-300`}
+      } bg-secondary-background shadow-lg flex flex-col rounded-r-3xl py-6 transition-all duration-300`}
     >
       {/* Botón para abrir/cerrar */}
       <button
@@ -39,12 +39,16 @@ export default function Sidebar() {
       </button>
 
       {/* Imagen de usuario */}
-      <div className="flex justify-center items-center mb-4">
+      <div className={`flex justify-start px-2 items-center mb-4`}>
         <img
-          src="https://randomuser.me/api/portraits/men/1.jpg"
+          src="https://randomuser.me/api/portraits/men/8.jpg"
           alt="User"
-          className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+          className="w-10 h-10 rounded-lg shadow-md"
         />
+        <div className="flex flex-col truncate">
+          <h3 className={`flex ${sidebarOpen ? "inline" : "hidden"} justify-start px-2 items-center`}>Bertin Humberto Carvajal</h3>
+          <p className={`flex ${sidebarOpen ? "inline" : "hidden"} justify-start px-2 items-center text-xs`}>Super Admin</p>
+        </div>
       </div>
 
       {/* Menú de navegación */}
@@ -85,7 +89,7 @@ export default function Sidebar() {
           data-tooltip-id="sidebar-tooltip" 
           data-tooltip-content="Cerrar sesión" 
         />
-        <span className={`ml-4 text-gray-700 ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Cerrar sesión</span>
+        <span className={`ml-4 text-gray-700 truncate ${sidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>Cerrar sesión</span>
       </div>
 
       <Tooltip
