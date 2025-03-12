@@ -1,9 +1,7 @@
 import { useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from "@mui/icons-material/Add";
-import { Modal, Box, TextField, Button } from "@mui/material";
+import SearchFilter from "../../components/layout/SearchFilter";
+import ClassroomsCard from "../../components/layout/ClassroomsCard";
+import { Close, Add } from "@mui/icons-material";
 
 const aulasData = [
   { nombre: "CC11", dispositivos: 1 },
@@ -19,140 +17,175 @@ const aulasData = [
 export default function ClassroomsPage() {
   const [aulas, setAulas] = useState(aulasData);
   const [search, setSearch] = useState("");
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openAddModal, setOpenAddModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedAula, setSelectedAula] = useState(null);
-  const isLoggedIn = true;
+  const [modalType, setModalType] = useState("");
 
+  const openModal = (type, aula = null) => {
+    setSelectedAula(aula);
+    setModalType(type);
+  };
 
-  const handleCloseEditModal = () => setOpenEditModal(false);
-  const handleCloseAddModal = () => setOpenAddModal(false);
-  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+  const closeModal = () => setModalType("");
 
   const filteredAulas = aulas.filter((aula) =>
     aula.nombre.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
-      <div className={`relative z-10 p-6 transition-all duration-300`}>
-        <div className="flex justify-start p-4 w-full mt-2">
-          <div className="flex items-center bg-white border border-gray-300 rounded-full overflow-hidden shadow-md w-1/2">
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="outline-none px-4 py-2 bg-transparent w-full"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <button className="bg-[#DEFF35] p-2 px-4 border-l border-gray-300">
-              <SearchIcon className="text-black" />
-            </button>
-          </div>
-          {/* Botón de Agregar */}
-          <button
-            className="flex items-center bg-[#DEFF35] text-black px-4 py-2 rounded-full shadow-md ml-4 hover:bg-[#c4e62d] transition duration-300"
-            onClick={() => setOpenAddModal(true)}
-          >
-            <AddIcon className="mr-2" /> {/* Ícono de MUI */}
-            Agregar
-          </button>
-        </div>
+    <div className="classrooms-container">
+      <style>
+        {`
+          /* Estilos del modal */
+          .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            pointer-events: none;
+          }
 
-        {/* Cards de aulas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-          {filteredAulas.map((aula, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg border border-gray-200"
-            >
-              <div className="text-left">
-                <p className="font-bold">Nombre: {aula.nombre}</p>
-                <p>Dispositivos registrados: {aula.dispositivos}</p>
-              </div>
-              <div className="flex gap-3 text-gray-600">
-                <DeleteIcon className="cursor-pointer hover:text-red-500" onClick={() => setOpenDeleteModal(true)} />
-                <EditIcon className="cursor-pointer hover:text-[#c4e62d]" onClick={() => setOpenEditModal(true)} />
-              </div>
-            </div>
-          ))}
-        </div>
+          .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 51;
+            pointer-events: auto;
+          }
+
+          .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+          }
+
+          .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+          }
+
+          .modal-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          }
+
+          .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+          }
+
+          .cancel-btn {
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+          }
+
+          .action-btn {
+            background-color: #DEFF35;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+          }
+        `}
+      </style>
+
+      <div className="relative z-10 p-6 transition-all duration-300 flex items-center">
+        {/* Componente de búsqueda */}
+        <SearchFilter search={search} setSearch={setSearch} setOpenAddModal={() => openModal("add")} />
+        
+        {/* Botón de Agregar */}
+        <button
+          className="flex items-center bg-action-primary text-black px-4 py-2 rounded-full shadow-md ml-4 hover:bg-action-hover transition duration-300"
+          onClick={() => openModal("add")}
+        >
+          <Add className="mr-2" />
+          Agregar
+        </button>
       </div>
 
-      {/* Modal de Editar Aula */}
-      <Modal open={openEditModal} onClose={handleCloseEditModal}>
-        <Box sx={modalStyles}>
-          <h2 className="text-xl font-bold mb-4 text-center">Editar Aula</h2>
-          <TextField label="Nombre" defaultValue={selectedAula?.nombre} fullWidth margin="normal" />
-          <TextField label="Docencia" defaultValue="D4" fullWidth margin="normal" />
-          <div className="flex justify-center gap-2 mt-4">
-            <Button variant="outlined" onClick={handleCloseEditModal} sx={cancelButtonStyle}>
-              Cancelar
-            </Button>
-            <Button variant="contained" sx={actionButtonStyle}>
-              Actualizar
-            </Button>
-          </div>
-        </Box>
-      </Modal>
+      {/* Cards de aulas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+        {filteredAulas.map((aula, index) => (
+          <ClassroomsCard
+            key={index}
+            aula={aula}
+            onEdit={() => openModal("edit", aula)}
+            onDelete={() => openModal("delete", aula)}
+          />
+        ))}
+      </div>
 
-      {/* Modal de Añadir Aula */}
-      <Modal open={openAddModal} onClose={handleCloseAddModal}>
-        <Box sx={modalStyles}>
-          <h2 className="text-xl font-bold mb-4 text-center">Añadir Aula</h2>
-          <TextField label="Nombre" placeholder="CC12" fullWidth margin="normal" />
-          <TextField label="Docencia" placeholder="D4" fullWidth margin="normal" />
-          <div className="flex justify-center gap-2 mt-4">
-            <Button variant="outlined" onClick={handleCloseAddModal} sx={cancelButtonStyle}>
-              Cancelar
-            </Button>
-            <Button variant="contained" sx={actionButtonStyle}>
-              Agregar
-            </Button>
-          </div>
-        </Box>
-      </Modal>
+      {/* Modales */}
+      {modalType && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <button className="close-btn" onClick={closeModal}>
+              <Close />
+            </button>
 
-      {/* Modal de Eliminar Aula */}
-      <Modal open={openDeleteModal} onClose={handleCloseDeleteModal}>
-        <Box sx={modalStyles}>
-          <h2 className="text-xl font-bold mb-4 text-center">Eliminar Aula</h2>
-          <p className="mb-4 text-center">¿Estás seguro que deseas eliminar el aula {selectedAula?.nombre}?</p>
-          <div className="flex justify-center gap-2">
-            <Button variant="outlined" onClick={handleCloseDeleteModal} sx={cancelButtonStyle}>
-              Cancelar
-            </Button>
-            <Button variant="contained" sx={actionButtonStyle}>
-              Eliminar
-            </Button>
+            {/* Modal de Editar Aula */}
+            {modalType === "edit" && (
+              <>
+                <h2 className="modal-title">Editar Aula</h2>
+                <input className="modal-input" type="text" defaultValue={selectedAula?.nombre} placeholder="Nombre" />
+                <input className="modal-input" type="text" defaultValue="D4" placeholder="Docencia" />
+                <div className="modal-actions">
+                  <button className="cancel-btn" onClick={closeModal}>Cancelar</button>
+                  <button className="action-btn">Actualizar</button>
+                </div>
+              </>
+            )}
+
+            {/* Modal de Añadir Aula */}
+            {modalType === "add" && (
+              <>
+                <h2 className="modal-title">Añadir Aula</h2>
+                <input className="modal-input" type="text" placeholder="Nombre" />
+                <input className="modal-input" type="text" placeholder="Docencia" />
+                <div className="modal-actions">
+                  <button className="cancel-btn" onClick={closeModal}>Cancelar</button>
+                  <button className="action-btn">Agregar</button>
+                </div>
+              </>
+            )}
+
+            {/* Modal de Eliminar Aula */}
+            {modalType === "delete" && (
+              <>
+                <h2 className="modal-title">Eliminar Aula</h2>
+                <p className="modal-text">¿Estás seguro que deseas eliminar el aula {selectedAula?.nombre}?</p>
+                <div className="modal-actions">
+                  <button className="cancel-btn" onClick={closeModal}>Cancelar</button>
+                  <button className="action-btn">Eliminar</button>
+                </div>
+              </>
+            )}
           </div>
-        </Box>
-      </Modal>
+        </div>
+      )}
     </div>
   );
 }
-
-// Estilos de los modales
-const modalStyles = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 5,
-};
-
-const cancelButtonStyle = {
-  backgroundColor: "#FFFFFF",
-  color: "#000000",
-  borderBlockColor: "#000000",
-};
-
-const actionButtonStyle = {
-  backgroundColor: "#DEFF35",
-  color: "#000000",
-};

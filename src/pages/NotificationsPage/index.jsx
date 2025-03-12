@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchFilter from "../../components/layout/SearchFilter";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
@@ -47,21 +47,8 @@ export default function NotificationsPage() {
 
       {/* Contenido principal */}
       <div className={`relative z-10 p-6 transition-all duration-300`}>
-        {/* Barra de búsqueda */}
-        <div className="flex justify-start p-4 w-full mt-2">
-          <div className="flex items-center bg-white border border-gray-300 rounded-full overflow-hidden shadow-md w-1/2">
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="outline-none px-4 py-2 bg-transparent w-full"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <button className="bg-[#DEFF35] p-2 px-4 border-l border-gray-300">
-              <SearchIcon className="text-black" />
-            </button>
-          </div>
-        </div>
+        {/* Componente de búsqueda */}
+        <SearchFilter search={search} setSearch={setSearch} />
 
         {/* Tabla de notificaciones */}
         <div className="mt-8">

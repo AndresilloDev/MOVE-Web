@@ -17,13 +17,6 @@ const SearchFilter = ({ search, setSearch, setOpenAddModal }) => {
                         <SearchIcon className="text-black" />
                     </button>
                 </div> 
-                <button
-                    className="flex items-center bg-action-primary text-black px-4 py-2 rounded-full shadow-md ml-4 hover:bg-action-hover transition duration-300"
-                    onClick={() => setOpenAddModal(true)}
-                >
-                    <AddIcon className="mr-2" />
-                    Agregar
-                </button>
             </div>
     )
 }
