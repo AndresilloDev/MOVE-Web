@@ -16,8 +16,7 @@ const Header = ({ isLoggedIn }) => {
                     <ButtonBox 
                         text="Iniciar Sesión" 
                         to="/login" 
-                        height="36px" 
-                        smHeight="40px"
+                        height="40px" 
                         borderRadius="lg" 
                     />
                 )}
