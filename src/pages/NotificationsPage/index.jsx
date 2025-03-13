@@ -1,7 +1,6 @@
 import { useState } from "react";
 import SearchFilter from "../../components/layout/SearchFilter";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import NotificationsTable from "../../components/layout/NotificationsTable";
 
 const datos = [
   { fecha: "2025-01-30 11:30:56", dispositivo: "#246568", nombre: "D4 - CC11", sensor: "Temperatura" },
@@ -17,97 +16,16 @@ const datos = [
 
 export default function NotificationsPage() {
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-
-  const filteredData = datos.filter(item =>
-    item.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    item.dispositivo.toLowerCase().includes(search.toLowerCase()) ||
-    item.sensor.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
-
       {/* Contenido principal */}
-      <div className={`relative z-10 p-6 transition-all duration-300`}>
+      <div className="relative z-10 p-6 transition-all duration-300">
         {/* Componente de búsqueda */}
         <SearchFilter search={search} setSearch={setSearch} />
-
+        
         {/* Tabla de notificaciones */}
-        <div className="mt-8">
-          <table className="w-full border-collapse text-left">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 border-b border-black">Fecha</th>
-                <th className="px-4 py-2 border-b border-black">Dispositivo</th>
-                <th className="px-4 py-2 border-b border-black">Nombre</th>
-                <th className="px-4 py-2 border-b border-black">Sensor</th>
-                <th className="px-4 py-2 border-b border-black">Detalles</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedData.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border-b border-black">{item.fecha}</td>
-                  <td className="px-4 py-2 border-b border-black">{item.dispositivo}</td>
-                  <td className="px-4 py-2 border-b border-black">{item.nombre}</td>
-                  <td className="px-4 py-2 border-b border-black">{item.sensor}</td>
-                  <td className="px-4 py-2 border-b border-black">
-                    <button className="bg-[#DEFF35] text-black px-4 py-1 rounded-md shadow-md transition duration-300 hover:bg-[#c4e62d] hover:shadow-lg">
-                      Ver más
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Paginación */}
-        <div className="flex justify-end mt-8 space-x-2 text-black">
-          <button
-            className="px-2 py-1"
-            onClick={handlePrevious}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeftIcon />
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              className={`px-2 py-1 text-black font-bold border border-black rounded-md ${
-                currentPage === i + 1 ? "bg-[#DEFF35]" : ""
-              }`}
-              onClick={() => setCurrentPage(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            className="px-2 py-1"
-            onClick={handleNext}
-            disabled={currentPage === totalPages}
-          >
-            <ChevronRightIcon />
-          </button>
-        </div>
+        <NotificationsTable data={datos} search={search} />
       </div>
     </div>
   );
