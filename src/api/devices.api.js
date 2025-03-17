@@ -5,12 +5,13 @@ const endpoint = "/devices";
 export const getDevices = async () => {
     try {
         const response = await api.get(endpoint);
-        return response.data;
+        return { data: response.data };
     } catch (error) {
         console.error("getDevices error:", error);
-        return [];
+        return { data: [] };
     }
 };
+
 
 export const getDevice = async (deviceId) => {
     try {
