@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { Pencil, Trash2 } from "lucide-react";
 
-const ElementCard = ({ item, type }) => {
+const ElementCard = ({ item, type, onDelete }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -12,35 +13,38 @@ const ElementCard = ({ item, type }) => {
         navigate(routes[type] || "/");
     };
 
+    const handleDeleteClick = (e) => {
+        e.stopPropagation(); // Evita que el evento de clic en el card se dispare
+        onDelete(item);
+    };
+
     const renderContent = () => {
         switch (type) {
             case "buildings":
                 return (
                     <>
-                        <p><span className="font-['Helvetica-Bold']">Nombre:</span> {item.name}</p>
-                        <p>Dispositivos registrados: {item.deviceCount}</p>
-                        <p>Espacios registrados: {item.spaceCount}</p>
+                        <p><span className="font-['Helvetica-Bold']">Nombre:</span> <span className="truncate">{item.name}</span></p>
+                        <p><span className="font-['Helvetica-Bold']">Dispositivos registrados:</span> {item.deviceCount}</p>
+                        <p><span className="font-['Helvetica-Bold']">Espacios registrados:</span> {item.spaceCount}</p>
                     </>
                 );
             case "classrooms":
                 return (
                     <>
-                        <p><span className="font-['Helvetica-Bold']">Aula:</span> {item.name}</p>
-                        <p>Capacidad: {item.capacity}</p>
-                        <p>Dispositivos: {item.deviceCount}</p>
+                        <p><span className="font-['Helvetica-Bold']">Aula:</span> <span className="truncate">{item.name}</span></p>
+                        <p><span className="font-['Helvetica-Bold']">Capacidad:</span> {item.capacity}</p>
+                        <p><span className="font-['Helvetica-Bold']">Dispositivos:</span> {item.deviceCount}</p>
                     </>
                 );
             case "devices":
                 return (
                     <>
                         <div className="flex space-x-4">
-                            <div>
-                                <span className="font-['Helvetica-Bold']">Dispositivo:</span> {item.name}
-                            </div>
+                            <div><span className="font-['Helvetica-Bold']">Dispositivo:</span> <span className="truncate">{item.name}</span></div>
                         </div>
                         <div className="mt-2">
-                            <div><span className="font-['Helvetica-Bold']">Aula:</span> {item.space ? item.space.name : 'Aula no disponible'}</div> {/* Nombre del aula */}
-                            <div><span className="font-['Helvetica-Bold']">Docencia:</span> {item.building ? item.building.name : 'Edificio no disponible'}</div> {/* Nombre del edificio */}
+                            <div><span className="font-['Helvetica-Bold']">Aula:</span> {item.space ? item.space.name : 'Aula no disponible'}</div>
+                            <div><span className="font-['Helvetica-Bold']">Edificio:</span> {item.building ? item.building.name : 'Edificio no disponible'}</div>
                         </div>
                     </>
                 );
@@ -50,17 +54,30 @@ const ElementCard = ({ item, type }) => {
     };
 
     return (
-        <div className="
-            flex flex-1 flex-col items-start justify-start
-            min-w-[320px] w-1/2 max-w-[600px]
-            bg-white 
-            text-black text-xl
-            border rounded-lg border-secondary
-            p-4
-            cursor-pointer"
+        <div 
+            className="flex flex-1 flex-col items-start justify-between
+                       min-w-[420px] w-1/2 bg-white 
+                       text-black text-xl border rounded-lg border-secondary
+                       p-4 cursor-pointer relative hover:bg-secondary-background"
             onClick={handleClick}
         >
-            {renderContent()}
+            {/* Botones de Editar y Eliminar */}
+            <div className="absolute top-3 right-3 flex gap-2 z-10">
+                <button 
+                    className="text-gray-500 hover:text-black p-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors">
+                    <Pencil size={20} />
+                </button>
+                <button 
+                    className="text-red-600 hover:text-red-800 p-2 rounded-md border border-red-600 hover:bg-red-100 transition-colors"
+                    onClick={handleDeleteClick}
+                >
+                    <Trash2 size={20} />
+                </button>
+            </div>
+
+            <div className="flex-1 w-full">
+                {renderContent()}
+            </div>
         </div>
     );
 };

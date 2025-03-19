@@ -30,11 +30,11 @@ export default function Sidebar() {
       </button>
 
       {/* Imagen de usuario */}
-      <div className="flex items-center px-3 mb-6">
+      <div className="flex items-center pl-2 mb-6">
         <img
           src="https://randomuser.me/api/portraits/men/8.jpg"
           alt="User"
-          className="w-8 h-8 rounded-lg object-cover duration-300"
+          className="w-12 h-12 rounded-lg object-cover duration-300"
         />
         <div
           className={`overflow-hidden transition-[max-width] duration-300 ${
