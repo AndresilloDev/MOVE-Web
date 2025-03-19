@@ -8,7 +8,7 @@ const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
 
   return (
     <div
-      className="fixed inset-0 backdrop-blur-xs bg-opacity-40 flex justify-center items-center z-50"
+      className="fixed inset-0 backdrop-blur-xs flex justify-center items-center z-50"
       onClick={onClose}
     >
       <motion.div
@@ -16,7 +16,7 @@ const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.2 }}
-        className="bg-white p-6 rounded-2xl shadow-lg relative w-96"
+        className="bg-secondary-background rounded-2xl shadow-xl relative w-1/3 h-fit p-12"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Botón de cierre */}
@@ -24,21 +24,21 @@ const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
           className="absolute top-3 right-3 text-gray-500 hover:text-black"
           onClick={onClose}
         >
-          <X size={20} />
+          <X size={30} />
         </button>
 
         {/* Título dinámico */}
-        <h2 className="text-xl font-semibold mb-4">Eliminar {itemType}</h2>
+        <h2 className="text-2xl font-semibold mb-12 text-center">Eliminar {itemType}</h2>
 
         {/* Contenido */}
-        <p className="text-gray-600 mb-6">
+        <p className="text-black text-center mb-6 text-xl">
           ¿Estás seguro de que deseas eliminar <strong className="font-['Helvetica-Bold']">{itemName}</strong>?
         </p>
 
         {/* Botones */}
-        <div className="flex justify-end gap-4">
-          <ButtonBox text="Cancelar" onClick={onClose} className="bg-gray-300 hover:bg-gray-400 text-black" />
-          <ButtonBox text="Eliminar" onClick={onDelete} className="text-white bg-red-600 hover:bg-red-700" />
+        <div className="flex justify-center gap-4 mt-12">
+          <ButtonBox text="Cancelar" onClick={onClose} className="px-12 bg-transparent hover:bg-secondary border border-black" />
+          <ButtonBox text="Eliminar" onClick={onDelete} className="px-12" />
         </div>
       </motion.div>
     </div>

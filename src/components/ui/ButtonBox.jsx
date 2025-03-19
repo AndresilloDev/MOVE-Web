@@ -13,7 +13,7 @@ const ButtonBox = ({ text, onClick, to, className = "", width = "auto", height =
 
     return (
         <button 
-            className={`bg-action-primary text-text-primary px-4 py-2 border border-lines cursor-pointer transition-none ${className} rounded-${borderRadius} hover:bg-black`}
+            className={`bg-action-primary hover:bg-action-hover duration-300 text-text-primary px-4 py-2 border border-lines cursor-pointer ${className} rounded-${borderRadius}`}
             onClick={handleClick}
             style={{ width, height }}
         >

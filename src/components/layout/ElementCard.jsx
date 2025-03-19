@@ -64,11 +64,11 @@ const ElementCard = ({ item, type, onDelete }) => {
             {/* Botones de Editar y Eliminar */}
             <div className="absolute top-3 right-3 flex gap-2 z-10">
                 <button 
-                    className="text-gray-500 hover:text-black p-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors">
+                    className="text-gray-500 hover:text-black p-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors cursor-pointer">
                     <Pencil size={20} />
                 </button>
                 <button 
-                    className="text-red-600 hover:text-red-800 p-2 rounded-md border border-red-600 hover:bg-red-100 transition-colors"
+                    className="text-red-600 hover:text-red-800 p-2 rounded-md border border-red-600 hover:bg-red-100 transition-colors cursor-pointer"
                     onClick={handleDeleteClick}
                 >
                     <Trash2 size={20} />
