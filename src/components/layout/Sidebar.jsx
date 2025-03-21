@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
 import { Home, Users, Bell, Building, LogOut, User, Cpu } from "lucide-react";
+import { logout } from "../../api/auth.api.js";
 
 export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -114,7 +115,7 @@ export default function Sidebar() {
 
       {/* Cerrar sesión (separado) */}
       <button
-        onClick={() => console.log("Cerrar sesión")}
+        onClick={() => logout()}
         className={`flex items-center px-4 py-3 hover:bg-red-700 rounded-lg  ${
           sidebarOpen ? "" : "justify-center"
         }`}

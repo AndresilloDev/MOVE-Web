@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import {useContext, useEffect, useState} from "react";
 
 import MainLayout from "../components/layout/MainLayout";
 import HeaderOnlyLayout from "../components/layout/HeaderOnly";
@@ -23,8 +23,15 @@ import SelectedNotificationPage from "../pages/SelectedNotificationPage";
 
 import NotFoundPage from "../pages/404Page";
 
+import { AuthContext } from "../context/AuthContext";
+
 export const AppRouter = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const { user } = useContext(AuthContext);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        setIsLoggedIn(!!user);
+    }, [user]);
 
     return (
         <Routes>

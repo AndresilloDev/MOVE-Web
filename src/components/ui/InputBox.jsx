@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const InputBox = ({ type, label, translateX = "-1.25rem" }) => {
+const InputBox = ({ setValue, type, label, translateX = "-1.25rem" }) => {
     const [isFocused, setIsFocused] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
 
@@ -17,6 +17,7 @@ const InputBox = ({ type, label, translateX = "-1.25rem" }) => {
                 className='h-10 w-full px-3 text-base text-black bg-white border-lines border-1 rounded-md border-opacity-50 outline-none focus:border-black placeholder-gray-300 placeholder-opacity-0 transition duration-200'
                 onFocus={() => setIsFocused(true)}
                 onBlur={handleBlur}
+                onChange={(e) => setValue(e.target.value)}
             />
             <span
                 className='text-base text-black text-opacity-80 bg-white absolute left-3 top-2.5 px-2 transition duration-200 input-text'
