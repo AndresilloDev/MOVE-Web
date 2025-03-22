@@ -1,10 +1,11 @@
-import { useState } from "react";
+import {useContext, useState} from "react";
 import { NavLink } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
 import { Home, Users, Bell, Building, LogOut, User, Cpu } from "lucide-react";
-import { logout } from "../../api/auth.api.js";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 export default function Sidebar() {
+  const { handleLogout } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const menuItems = [
@@ -115,7 +116,7 @@ export default function Sidebar() {
 
       {/* Cerrar sesión (separado) */}
       <button
-        onClick={() => logout()}
+        onClick={() => handleLogout()}
         className={`flex items-center px-4 py-3 hover:bg-red-700 rounded-lg  ${
           sidebarOpen ? "" : "justify-center"
         }`}

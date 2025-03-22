@@ -30,7 +30,7 @@ export const AppRouter = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        setIsLoggedIn(!!user);
+        user ? setIsLoggedIn(true) : setIsLoggedIn(false);
     }, [user]);
 
     return (

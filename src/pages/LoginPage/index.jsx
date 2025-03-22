@@ -1,30 +1,13 @@
-import { login } from "../../api/auth.api.js";
+import { AuthContext } from "../../context/AuthContext.jsx";
 import InputBox from "../../components/ui/InputBox";
 import ButtonBox from "../../components/ui/ButtonBox";
-import {useState} from "react";
+import {useContext, useState} from "react";
 
 
 export default function LoginPage() {
+    const { handleLogin } = useContext(AuthContext);
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(false); // Estado de error
-
-    const handleSubmit = async () => {
-        try {
-            const response = await login(user, password);
-
-            if (response.status === 200) {
-                console.log(response);
-            } else if (response.status === 401) {
-                setError(true);
-            }
-
-        } catch (err) {
-            console.log('Error en la conexión:', err);
-            setError(true);
-        }
-
-    };
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen px-4 sm:px-8 mt-[-10vh]">
@@ -36,7 +19,7 @@ export default function LoginPage() {
                 <InputBox type="email" label="Correo electrónico" translateX="-1.25rem" setValue={setUser} />
                 <InputBox type="password" label="Contraseña" translateX="-1rem" setValue={setPassword} />
                 <a href="/recover-account" className="text-sm text-black underline self-end">Olvidé mi Contraseña</a>
-                <ButtonBox text="Inicia Sesión" width="100%" height="40px" onClick={handleSubmit} />
+                <ButtonBox text="Inicia Sesión" width="100%" height="40px" onClick={() => handleLogin(user, password)}/>
             </div>
         </div>
     );
