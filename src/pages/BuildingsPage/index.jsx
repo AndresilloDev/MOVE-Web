@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { getBuildings, deleteBuilding } from "../../api/buildings.api";
+import { getBuildings, deleteBuilding, updateBuilding } from "../../api/buildings.api";
 import SearchFilter from "../../components/layout/SearchFilter";
 import CardsTable from "../../components/layout/CardsTable";
 import DeleteDialog from "../../components/layout/DeleteDialog";
+import EditDialog from "../../components/layout/EditDialog";
 
 const BuildingsPage = () => {
     const [buildings, setBuildings] = useState([]);
@@ -10,6 +11,7 @@ const BuildingsPage = () => {
     const [error, setError] = useState(null);
     const [search, setSearch] = useState("");
     const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, building: null });
+    const [editDialog, setEditDialog] = useState({ isOpen: false, building: null });
 
     useEffect(() => {
         fetchBuildings();
@@ -39,6 +41,18 @@ const BuildingsPage = () => {
         }
     };
 
+    const handleSave = async (editedBuilding) => {
+        try {
+            const response = await updateBuilding(editedBuilding._id, editedBuilding);
+            if (response.data) {
+                setBuildings(buildings.map(b => b._id === editedBuilding._id ? response.data : b));
+            }
+            setEditDialog({ isOpen: false, building: null });
+        } catch (err) {
+            console.error("Error al actualizar el edificio:", err);
+        }
+    };
+
     const filteredBuildings = buildings.filter(building =>
         building.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -59,18 +73,27 @@ const BuildingsPage = () => {
     return (
         <div>
             <SearchFilter search={search} setSearch={setSearch} />
-            <CardsTable 
-                items={filteredBuildings} 
-                type="buildings" 
-                onDelete={(building) => setDeleteDialog({ isOpen: true, building })} 
+            <CardsTable
+                items={filteredBuildings}
+                type="buildings"
+                onDelete={(building) => setDeleteDialog({ isOpen: true, building })}
+                onEdit={(building) => setEditDialog({ isOpen: true, building })}
             />
 
-            <DeleteDialog 
-                isOpen={deleteDialog.isOpen} 
-                onClose={() => setDeleteDialog({ isOpen: false, building: null })} 
-                onDelete={handleDelete} 
-                itemType="Edificio" 
-                itemName={deleteDialog.building?.name} 
+            <DeleteDialog
+                isOpen={deleteDialog.isOpen}
+                onClose={() => setDeleteDialog({ isOpen: false, building: null })}
+                onDelete={handleDelete}
+                itemType="Edificio"
+                itemName={deleteDialog.building?.name}
+            />
+
+            <EditDialog
+                isOpen={editDialog.isOpen}
+                onClose={() => setEditDialog({ isOpen: false, building: null })}
+                onSave={handleSave}
+                itemType="Edificio"
+                item={editDialog.building}
             />
         </div>
     );

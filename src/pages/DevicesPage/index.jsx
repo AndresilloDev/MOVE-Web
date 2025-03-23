@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { getDevices, deleteDevice } from "../../api/devices.api";
+import { getDevices, deleteDevice, updateDevice } from "../../api/devices.api";
 import SearchFilter from "../../components/layout/SearchFilter";
 import CardsTable from "../../components/layout/CardsTable";
 import DeleteDialog from "../../components/layout/DeleteDialog";
-
+import EditDialog from "../../components/layout/EditDialog";
 const DevicesPage = () => {
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [search, setSearch] = useState("");
     const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, device: null });
+    const [editDialog, setEditDialog] = useState({ isOpen: false, device: null });
 
     useEffect(() => {
         fetchDevices();
@@ -39,6 +40,16 @@ const DevicesPage = () => {
         }
     };
 
+    const handleSave = async (editedDevice) => {
+        try {
+            await updateDevice(editedDevice._id, editedDevice);
+            setDevices(devices.map(d => d._id === editedDevice._id ? editedDevice : d));
+            setEditDialog({ isOpen: false, device: null });
+        } catch (err) {
+            console.error("Error al actualizar el dispositivo:", err);
+        }
+    };
+
     const filteredDevices = devices.filter(device =>
         device.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -59,18 +70,27 @@ const DevicesPage = () => {
     return (
         <div>
             <SearchFilter search={search} setSearch={setSearch} />
-            <CardsTable 
-                items={filteredDevices} 
-                type="devices" 
-                onDelete={(device) => setDeleteDialog({ isOpen: true, device })} 
+            <CardsTable
+                items={filteredDevices}
+                type="devices"
+                onDelete={(device) => setDeleteDialog({ isOpen: true, device })}
+                onEdit={(device) => setEditDialog({ isOpen: true, device })}
             />
-            
-            <DeleteDialog 
-                isOpen={deleteDialog.isOpen} 
-                onClose={() => setDeleteDialog({ isOpen: false, device: null })} 
-                onDelete={handleDelete} 
-                itemType="Dispositivo" 
-                itemName={deleteDialog.device?.name} 
+
+            <DeleteDialog
+                isOpen={deleteDialog.isOpen}
+                onClose={() => setDeleteDialog({ isOpen: false, device: null })}
+                onDelete={handleDelete}
+                itemType="Dispositivo"
+                itemName={deleteDialog.device?.name}
+            />
+
+            <EditDialog
+                isOpen={editDialog.isOpen}
+                onClose={() => setEditDialog({ isOpen: false, device: null })}
+                onSave={handleSave}
+                itemType="Dispositivo"
+                item={editDialog.device}
             />
         </div>
     );
