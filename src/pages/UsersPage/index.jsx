@@ -23,7 +23,7 @@ const UsersPage = () => {
     }, []);
 
     const filteredUsers = users.filter(user =>
-        user.username.toLowerCase().includes(searchQuery.toLowerCase())
+        user.user.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastUser  = currentPage * usersPerPage;
@@ -119,9 +119,9 @@ const UsersPage = () => {
             <ul className="mt-4">
                 {currentUsers.map((user) => (
                     <li key={user.id} className="p-2 border-b border-gray-300 flex justify-between items-center">
-                        <span className="text-xl w-1/5 text-center">{user.username}</span>
+                        <span className="text-xl w-1/5 text-center">{user.user}</span>
                         <span className="text-xl w-1/5 text-center">{user.name}</span>
-                        <span className="text-xl w-1/5 text-center">{user.surname}</span>
+                        <span className="text-xl w-1/5 text-center">{user.lastName}</span>
                         <div className="w-1/5 flex justify-center">
                             <button className="ml-2 text-green-500" onClick={() => openEditModal(user)}>
                                 <FaEdit size={24} />
