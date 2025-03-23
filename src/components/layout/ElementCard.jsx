@@ -1,11 +1,8 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2 } from "lucide-react";
-import EditDialog from "./EditDialog.jsx";
 
-const ElementCard = ({ item, type, onDelete, onEdit }) => {
+const ElementCard = ({ item, type, onDelete, onSave }) => {
     const navigate = useNavigate();
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
     const handleClick = () => {
         const routes = {
@@ -17,18 +14,13 @@ const ElementCard = ({ item, type, onDelete, onEdit }) => {
     };
 
     const handleDeleteClick = (e) => {
-        e.stopPropagation();
+        e.stopPropagation(); // Evita que el evento de clic en el card se dispare
         onDelete(item);
     };
 
     const handleEditClick = (e) => {
-        e.stopPropagation();
-        setIsEditDialogOpen(true);
-    };
-
-    const handleSave = (editedItem) => {
-        onEdit(editedItem);
-        setIsEditDialogOpen(false);
+        e.stopPropagation(); // Evita que el evento de clic en el card se dispare
+        onSave(item);
     };
 
     const renderContent = () => {
@@ -67,21 +59,22 @@ const ElementCard = ({ item, type, onDelete, onEdit }) => {
     };
 
     return (
-        <div
+        <div 
             className="flex flex-1 flex-col items-start justify-between
-                 min-w-[420px] w-1/2 bg-white
-                 text-black text-xl border rounded-lg border-secondary
-                 p-4 cursor-pointer relative hover:bg-secondary-background"
+                       min-w-[420px] w-1/2 bg-white 
+                       text-black text-xl border rounded-lg border-secondary
+                       p-4 cursor-pointer relative hover:bg-secondary-background"
             onClick={handleClick}
         >
+            {/* Botones de Editar y Eliminar */}
             <div className="absolute top-3 right-3 flex gap-2 z-10">
-                <button
+                <button 
                     className="text-gray-500 hover:text-black p-2 rounded-md border border-gray-300 hover:bg-gray-100 transition-colors cursor-pointer"
                     onClick={handleEditClick}
                 >
                     <Pencil size={20} />
                 </button>
-                <button
+                <button 
                     className="text-red-600 hover:text-red-800 p-2 rounded-md border border-red-600 hover:bg-red-100 transition-colors cursor-pointer"
                     onClick={handleDeleteClick}
                 >
@@ -92,14 +85,6 @@ const ElementCard = ({ item, type, onDelete, onEdit }) => {
             <div className="flex-1 w-full">
                 {renderContent()}
             </div>
-
-            <EditDialog
-                isOpen={isEditDialogOpen}
-                onClose={() => setIsEditDialogOpen(false)}
-                onSave={handleSave}
-                itemType={type}
-                item={item}
-            />
         </div>
     );
 };

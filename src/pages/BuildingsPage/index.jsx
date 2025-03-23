@@ -48,6 +48,7 @@ const BuildingsPage = () => {
                 setBuildings(buildings.map(b => b._id === editedBuilding._id ? response.data : b));
             }
             setEditDialog({ isOpen: false, building: null });
+            fetchBuildings();
         } catch (err) {
             console.error("Error al actualizar el edificio:", err);
         }
@@ -77,14 +78,14 @@ const BuildingsPage = () => {
                 items={filteredBuildings}
                 type="buildings"
                 onDelete={(building) => setDeleteDialog({ isOpen: true, building })}
-                onEdit={(building) => setEditDialog({ isOpen: true, building })}
+                onSave={(building) => setEditDialog({ isOpen: true, building })}
             />
 
             <DeleteDialog
                 isOpen={deleteDialog.isOpen}
                 onClose={() => setDeleteDialog({ isOpen: false, building: null })}
                 onDelete={handleDelete}
-                itemType="Edificio"
+                itemType="buildings"
                 itemName={deleteDialog.building?.name}
             />
 
@@ -92,7 +93,7 @@ const BuildingsPage = () => {
                 isOpen={editDialog.isOpen}
                 onClose={() => setEditDialog({ isOpen: false, building: null })}
                 onSave={handleSave}
-                itemType="Edificio"
+                itemType="buildings"
                 item={editDialog.building}
             />
         </div>

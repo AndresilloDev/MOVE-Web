@@ -45,6 +45,7 @@ const DevicesPage = () => {
             await updateDevice(editedDevice._id, editedDevice);
             setDevices(devices.map(d => d._id === editedDevice._id ? editedDevice : d));
             setEditDialog({ isOpen: false, device: null });
+            fetchDevices();
         } catch (err) {
             console.error("Error al actualizar el dispositivo:", err);
         }
@@ -74,14 +75,14 @@ const DevicesPage = () => {
                 items={filteredDevices}
                 type="devices"
                 onDelete={(device) => setDeleteDialog({ isOpen: true, device })}
-                onEdit={(device) => setEditDialog({ isOpen: true, device })}
+                onSave={(device) => setEditDialog({ isOpen: true, device })}
             />
 
             <DeleteDialog
                 isOpen={deleteDialog.isOpen}
                 onClose={() => setDeleteDialog({ isOpen: false, device: null })}
                 onDelete={handleDelete}
-                itemType="Dispositivo"
+                itemType="devices"
                 itemName={deleteDialog.device?.name}
             />
 
@@ -89,7 +90,7 @@ const DevicesPage = () => {
                 isOpen={editDialog.isOpen}
                 onClose={() => setEditDialog({ isOpen: false, device: null })}
                 onSave={handleSave}
-                itemType="Dispositivo"
+                itemType="devices"
                 item={editDialog.device}
             />
         </div>

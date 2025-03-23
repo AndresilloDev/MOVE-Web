@@ -4,16 +4,11 @@ import { X } from "lucide-react";
 import ButtonBox from "../ui/ButtonBox";
 
 const EditDialog = ({ isOpen, onClose, onSave, itemType, item }) => {
-    const [editedItem, setEditedItem] = useState(item);
+	const [editedItem, setEditedItem] = useState(item || {});
 
     useEffect(() => {
         setEditedItem(item);
     }, [item]);
-
-    const handleSave = () => {
-        onSave(editedItem);
-        onClose();
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,26 +29,6 @@ const EditDialog = ({ isOpen, onClose, onSave, itemType, item }) => {
                                 type="text"
                                 name="name"
                                 value={editedItem.name || ''}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
-                        <label className="block mb-4">
-                            <span className="text-black">Dispositivos registrados:</span>
-                            <input
-                                type="number"
-                                name="deviceCount"
-                                value={editedItem.deviceCount || ''}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
-                        <label className="block mb-4">
-                            <span className="text-black">Espacios registrados:</span>
-                            <input
-                                type="number"
-                                name="spaceCount"
-                                value={editedItem.spaceCount || ''}
                                 onChange={handleChange}
                                 className="w-full p-2 border border-gray-300 rounded-md"
                             />
@@ -165,8 +140,8 @@ const EditDialog = ({ isOpen, onClose, onSave, itemType, item }) => {
 
                 <div className="flex justify-center gap-4 mt-12">
                     <ButtonBox text="Cancelar" onClick={onClose} className="px-12 bg-transparent hover:bg-secondary border border-black" />
-                    <ButtonBox text="Guardar" onClick={handleSave} className="px-12" />
-                </div>
+					<ButtonBox text="Guardar" onClick={() => onSave(editedItem)} className="px-12" />
+				</div>
             </motion.div>
         </div>
     );
