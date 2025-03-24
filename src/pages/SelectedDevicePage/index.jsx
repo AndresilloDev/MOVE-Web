@@ -1,7 +1,7 @@
 const SelectedDevicePage = () => {
     return (
         <div>
-            <h1>Notificación seleccionada</h1>
+            <h1>Dispositivo seleccionada</h1>
         </div>
     );
 }

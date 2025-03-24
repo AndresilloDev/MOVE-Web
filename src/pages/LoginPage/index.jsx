@@ -16,8 +16,8 @@ export default function LoginPage() {
             </h1>
 
             <div className="flex flex-col space-y-4 justify-center items-center w-full max-w-xs sm:max-w-md lg:max-w-2md mt-6">
-                <InputBox type="email" label="Correo electrónico" translateX="-1.25rem" setValue={setUser} />
-                <InputBox type="password" label="Contraseña" translateX="-1rem" setValue={setPassword} />
+                <InputBox type="email" label="Usuario" translateX="-.7rem" setValue={setUser} inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
+                <InputBox type="password" label="Contraseña" translateX="-1rem" setValue={setPassword} inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
                 <a href="/recover-account" className="text-sm text-black underline self-end">Olvidé mi Contraseña</a>
                 <ButtonBox text="Inicia Sesión" width="100%" height="40px" onClick={() => handleLogin(user, password)}/>
             </div>

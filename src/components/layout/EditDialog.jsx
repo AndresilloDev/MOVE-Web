@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import ButtonBox from "../ui/ButtonBox";
+import InputBox from "../ui/InputBox";
 
 const EditDialog = ({ isOpen, onClose, onSave, itemType, item }) => {
-	const [editedItem, setEditedItem] = useState(item || {});
+    const [editedItem, setEditedItem] = useState(item || {});
 
     useEffect(() => {
         setEditedItem(item);
     }, [item]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const handleChange = (name, value) => {
         setEditedItem(prevState => ({
             ...prevState,
             [name]: value
@@ -22,87 +22,70 @@ const EditDialog = ({ isOpen, onClose, onSave, itemType, item }) => {
         switch (itemType) {
             case "buildings":
                 return (
-                    <>
-                        <label className="block mb-4">
-                            <span className="text-black">Nombre:</span>
-                            <input
-                                type="text"
-                                name="name"
-                                value={editedItem.name || ''}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
-                    </>
+                    <InputBox
+                    type="text"
+                    label="Nombre"
+                    inputClassName="my-4 bg-secondary-background"
+                    spanClassName="bg-secondary-background top-0"
+                    translateX="-0.8rem"
+                    translateY="-1.5rem"
+                    value={editedItem.name || ''}
+                    setValue={(value) => handleChange("name", value)}
+                />
                 );
             case "classrooms":
                 return (
                     <>
-                        <label className="block mb-4">
-                            <span className="text-black">Aula:</span>
-                            <input
-                                type="text"
-                                name="name"
-                                value={editedItem.name || ''}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
-                        <label className="block mb-4">
-                            <span className="text-black">Capacidad:</span>
-                            <input
-                                type="number"
-                                name="capacity"
-                                value={editedItem.capacity || ''}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
-                        <label className="block mb-4">
-                            <span className="text-black">Dispositivos:</span>
-                            <input
-                                type="number"
-                                name="deviceCount"
-                                value={editedItem.deviceCount || ''}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
+                        <InputBox
+                            type="text"
+                            label="Aula"
+                            setValue={(value) => handleChange("name", value)}
+                        />
+                        <InputBox
+                            type="number"
+                            label="Capacidad"
+                            setValue={(value) => handleChange("capacity", value)}
+                        />
+                        <InputBox
+                            type="number"
+                            label="Dispositivos"
+                            setValue={(value) => handleChange("deviceCount", value)}
+                        />
                     </>
                 );
             case "devices":
                 return (
                     <>
-                        <label className="block mb-4">
-                            <span className="text-black">Dispositivo:</span>
-                            <input
-                                type="text"
-                                name="name"
-                                value={editedItem.name || ''}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
-                        <label className="block mb-4">
-                            <span className="text-black">Aula:</span>
-                            <input
-                                type="text"
-                                name="spaceName"
-                                value={editedItem.space ? editedItem.space.name : 'Aula no disponible'}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
-                        <label className="block mb-4">
-                            <span className="text-black">Edificio:</span>
-                            <input
-                                type="text"
-                                name="buildingName"
-                                value={editedItem.building ? editedItem.building.name : 'Edificio no disponible'}
-                                onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
-                            />
-                        </label>
+                        <InputBox
+                            type="text"
+                            label="Dispositivo"
+                            inputClassName="my-4 bg-secondary-background"
+                            spanClassName="bg-secondary-background top-0"
+                            translateX="-1rem"
+                            translateY="-1.5rem"
+                            value={editedItem.name || ''}
+                            setValue={(value) => handleChange("name", value)}
+                        />
+                        <InputBox
+                            type="text"
+                            label="Aula"
+                            inputClassName="my-4 bg-secondary-background"
+                            spanClassName="bg-secondary-background top-0"
+                            translateX="-.6rem"
+                            translateY="-1.5rem"
+                            value={editedItem.space ? editedItem.space.name : 'Aula no disponible'}
+                            setValue={(value) => handleChange("spaceName", value)}
+                        />
+                        <InputBox
+                            type="text"
+                            label="Edificio"
+                            inputClassName="my-4 bg-secondary-background"
+                            spanClassName="bg-secondary-background top-0"
+                            translateX="-.75rem"
+                            translateY="-1.5rem"
+                            value={editedItem.building ? editedItem.building.name : 'Edificio no disponible'}
+                            setValue={(value) => handleChange("buildingName", value)}
+                        />
                     </>
                 );
             default:
@@ -114,7 +97,7 @@ const EditDialog = ({ isOpen, onClose, onSave, itemType, item }) => {
 
     return (
         <div
-            className="fixed inset-0 backdrop-blur-xs flex justify-center items-center z-50"
+            className="fixed inset-0 backdrop-blur-xs flex justify-center items-center z-50 px-4"
             onClick={onClose}
         >
             <motion.div
@@ -122,26 +105,26 @@ const EditDialog = ({ isOpen, onClose, onSave, itemType, item }) => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
-                className="bg-secondary-background rounded-2xl shadow-xl relative w-1/3 h-fit p-12"
+                className="bg-secondary-background rounded-2xl shadow-xl relative w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl h-fit p-6 sm:p-8 md:p-10 lg:p-12"
                 onClick={(e) => e.stopPropagation()}
             >
                 <button
                     className="absolute top-3 right-3 text-gray-500 hover:text-black"
                     onClick={onClose}
                 >
-                    <X size={30} />
+                    <X size={24} />
                 </button>
 
-                <h2 className="text-2xl font-semibold mb-12 text-center">Editar {itemType}</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold mb-8 text-center">Editar {itemType}</h2>
 
-                <div className="mb-6">
+                <div className="mb-4 sm:mb-6">
                     {renderForm()}
                 </div>
 
-                <div className="flex justify-center gap-4 mt-12">
-                    <ButtonBox text="Cancelar" onClick={onClose} className="px-12 bg-transparent hover:bg-secondary border border-black" />
-					<ButtonBox text="Guardar" onClick={() => onSave(editedItem)} className="px-12" />
-				</div>
+                <div className="flex justify-center gap-4 mt-8 sm:mt-12">
+                    <ButtonBox text="Cancelar" onClick={onClose} className="px-6 sm:px-12 bg-transparent hover:bg-secondary border border-black" />
+                    <ButtonBox text="Guardar" onClick={() => onSave(editedItem)} className="px-6 sm:px-12" />
+                </div>
             </motion.div>
         </div>
     );

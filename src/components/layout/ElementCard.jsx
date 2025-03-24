@@ -8,7 +8,7 @@ const ElementCard = ({ item, type, onDelete, onSave }) => {
         const routes = {
             buildings: `/classrooms/${item._id}`,
             classrooms: `/devices/${item._id}`,
-            devices: `/device-details/${item._id}`
+            devices: `/device/${item._id}`
         };
         navigate(routes[type] || "/");
     };

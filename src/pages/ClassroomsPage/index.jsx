@@ -1,60 +1,67 @@
-import { useState } from "react";
-import SearchFilter from "../../components/layout/SearchFilter";
-import ClassroomsCard from "../../components/layout/ClassroomsCard";
-import EditDialog from "../../components/layout/EditDialog";
-import { Close, Add } from "@mui/icons-material";
+import { useState, useEffect } from "react";
+import CardsTable from "../../components/layout/CardsTable";
+import axios from "axios";
 
-const aulasData = [
-  { _id: "1", nombre: "CC11", dispositivos: 1 },
-  { _id: "2", nombre: "CC12", dispositivos: 3 },
-  // Más datos...
-];
+const ClassroomsPage = ({ buildingId }) => {
+    const [classrooms, setClassrooms] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-export default function ClassroomsPage() {
-  const [aulas, setAulas] = useState(aulasData);
-  const [search, setSearch] = useState("");
-  const [editDialog, setEditDialog] = useState({ isOpen: false, aula: null });
+    useEffect(() => {
+        const fetchClassrooms = async () => {
+            try {
+                const response = await axios.get(`/api/buildings/${buildingId}/classrooms`);
+                setClassrooms(response.data);
+            } catch (error) {
+                console.error("Error fetching classrooms:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchClassrooms();
+    }, [buildingId]);
 
-  const handleSave = (editedAula) => {
-    setAulas(aulas.map(a => a._id === editedAula._id ? editedAula : a));
-    setEditDialog({ isOpen: false, aula: null });
-  };
+    const handleAdd = async (newClassroom) => {
+        try {
+            const response = await axios.post(`/api/classrooms`, newClassroom);
+            setClassrooms([...classrooms, response.data]);
+        } catch (error) {
+            console.error("Error adding classroom:", error);
+        }
+    };
 
-  const filteredAulas = aulas.filter((aula) =>
-      aula.nombre.toLowerCase().includes(search.toLowerCase())
-  );
+    const handleEdit = async (id, updatedClassroom) => {
+        try {
+            await axios.put(`/api/classrooms/${id}`, updatedClassroom);
+            setClassrooms(classrooms.map(cls => cls.id === id ? updatedClassroom : cls));
+        } catch (error) {
+            console.error("Error updating classroom:", error);
+        }
+    };
 
-  return (
-      <div className="classrooms-container">
-        <div className="relative z-10 p-6 transition-all duration-300 flex items-center">
-          <SearchFilter search={search} setSearch={setSearch} />
-          <button
-              className="flex items-center bg-action-primary text-black px-4 py-2 rounded-full shadow-md ml-4 hover:bg-action-hover transition duration-300"
-              onClick={() => setEditDialog({ isOpen: true, aula: null })}
-          >
-            <Add className="mr-2" />
-            Agregar
-          </button>
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`/api/classrooms/${id}`);
+            setClassrooms(classrooms.filter(cls => cls.id !== id));
+        } catch (error) {
+            console.error("Error deleting classroom:", error);
+        }
+    };
+
+    return (
+        <div>
+            <h2 className="text-xl font-bold mb-4">Aulas en el edificio</h2>
+            {loading ? (
+                <p>Cargando aulas...</p>
+            ) : (
+                <CardsTable 
+                    items={classrooms} 
+                    onAdd={handleAdd} 
+                    onEdit={handleEdit} 
+                    onDelete={handleDelete} 
+                />
+            )}
         </div>
+    );
+};
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-          {filteredAulas.map((aula, index) => (
-              <ClassroomsCard
-                  key={index}
-                  aula={aula}
-                  onEdit={() => setEditDialog({ isOpen: true, aula })}
-                  onDelete={() => {/* Lógica para eliminar */}}
-              />
-          ))}
-        </div>
-
-        <EditDialog
-            isOpen={editDialog.isOpen}
-            onClose={() => setEditDialog({ isOpen: false, aula: null })}
-            onSave={handleSave}
-            itemType="Aula"
-            item={editDialog.aula}
-        />
-      </div>
-  );
-}
+export default ClassroomsPage;
