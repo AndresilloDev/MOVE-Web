@@ -1,65 +1,112 @@
 import { useState, useEffect } from "react";
+import { getSpaces, deleteSpace, updateSpace } from "../../api/spaces.api";
+import { getBuildings } from "../../api/buildings.api";
+import SearchFilter from "../../components/layout/SearchFilter";
 import CardsTable from "../../components/layout/CardsTable";
-import axios from "axios";
+import DeleteDialog from "../../components/layout/DeleteDialog";
+import EditDialog from "../../components/layout/EditDialog";
 
 const ClassroomsPage = ({ buildingId }) => {
-    const [classrooms, setClassrooms] = useState([]);
+    const [spaces, setSpaces] = useState([]);
+    const [buildings, setBuildings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [search, setSearch] = useState("");
+    const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, space: null });
+    const [editDialog, setEditDialog] = useState({ isOpen: false, space: null });
 
     useEffect(() => {
-        const fetchClassrooms = async () => {
-            try {
-                const response = await axios.get(`/api/buildings/${buildingId}/classrooms`);
-                setClassrooms(response.data);
-            } catch (error) {
-                console.error("Error fetching classrooms:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchClassrooms();
+        fetchSpaces();
+        fetchBuildings();
     }, [buildingId]);
 
-    const handleAdd = async (newClassroom) => {
+    const fetchSpaces = async () => {
         try {
-            const response = await axios.post(`/api/classrooms`, newClassroom);
-            setClassrooms([...classrooms, response.data]);
-        } catch (error) {
-            console.error("Error adding classroom:", error);
+            setLoading(true);
+            const response = await getSpaces(buildingId);
+            setSpaces(response.data.sort((a, b) => a.name.localeCompare(b.name)));
+        } catch (err) {
+            console.log(err);
+            setError("Error al obtener los espacios");
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleEdit = async (id, updatedClassroom) => {
+    const fetchBuildings = async () => {
         try {
-            await axios.put(`/api/classrooms/${id}`, updatedClassroom);
-            setClassrooms(classrooms.map(cls => cls.id === id ? updatedClassroom : cls));
-        } catch (error) {
-            console.error("Error updating classroom:", error);
+            const response = await getBuildings(); 
+            setBuildings(response.data);
+        } catch (err) {
+            console.error("Error al obtener los edificios:", err);
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async () => {
+        if (!deleteDialog.space) return;
         try {
-            await axios.delete(`/api/classrooms/${id}`);
-            setClassrooms(classrooms.filter(cls => cls.id !== id));
-        } catch (error) {
-            console.error("Error deleting classroom:", error);
+            await deleteSpace(buildingId, deleteDialog.space._id);
+            setSpaces(spaces.filter(s => s._id !== deleteDialog.space._id));
+            setDeleteDialog({ isOpen: false, space: null });
+        } catch (err) {
+            console.error("Error al eliminar el espacio:", err);
         }
     };
+
+    const handleSave = async (editedSpace) => {
+        try {
+            await updateSpace(buildingId, editedSpace._id, editedSpace);
+            setSpaces(spaces.map(s => s._id === editedSpace._id ? editedSpace : s));
+            setEditDialog({ isOpen: false, space: null });
+            fetchSpaces();
+        } catch (err) {
+            console.error("Error al actualizar el espacio:", err);
+        }
+    };
+
+    const filteredSpaces = spaces.filter(space =>
+        space.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (loading) {
+        return (
+            <div>
+                <SearchFilter />
+                <div style={{ position: "absolute", left: "50%", top: "50%" }}>
+                    <div className="loader"></div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) return <p>{error}</p>;
 
     return (
         <div>
-            <h2 className="text-xl font-bold mb-4">Aulas en el edificio</h2>
-            {loading ? (
-                <p>Cargando aulas...</p>
-            ) : (
-                <CardsTable 
-                    items={classrooms} 
-                    onAdd={handleAdd} 
-                    onEdit={handleEdit} 
-                    onDelete={handleDelete} 
-                />
-            )}
+            <SearchFilter search={search} setSearch={setSearch} />
+            <CardsTable
+                items={filteredSpaces}
+                type="spaces"
+                onDelete={(space) => setDeleteDialog({ isOpen: true, space })}
+                onSave={(space) => setEditDialog({ isOpen: true, space })}
+            />
+
+            <DeleteDialog
+                isOpen={deleteDialog.isOpen}
+                onClose={() => setDeleteDialog({ isOpen: false, space: null })}
+                onDelete={handleDelete}
+                itemType="spaces"
+                itemName={deleteDialog.space?.name}
+            />
+
+            <EditDialog
+                isOpen={editDialog.isOpen}
+                onClose={() => setEditDialog({ isOpen: false, space: null })}
+                onSave={handleSave}
+                itemType="spaces"
+                item={editDialog.space}
+                buildings={buildings}
+            />
         </div>
     );
 };

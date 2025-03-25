@@ -29,16 +29,15 @@ const ElementCard = ({ item, type, onDelete, onSave }) => {
                 return (
                     <>
                         <p><span className="font-['Helvetica-Bold']">Nombre:</span> <span className="truncate">{item.name}</span></p>
-                        <p><span className="font-['Helvetica-Bold']">Dispositivos registrados:</span> {item.deviceCount}</p>
-                        <p><span className="font-['Helvetica-Bold']">Espacios registrados:</span> {item.spaceCount}</p>
+                        <p><span>Dispositivos registrados:</span> {item.deviceCount}</p>
+                        <p><span>Espacios registrados:</span> {item.spaceCount}</p>
                     </>
                 );
-            case "classrooms":
+            case "spaces":
                 return (
                     <>
                         <p><span className="font-['Helvetica-Bold']">Aula:</span> <span className="truncate">{item.name}</span></p>
-                        <p><span className="font-['Helvetica-Bold']">Capacidad:</span> {item.capacity}</p>
-                        <p><span className="font-['Helvetica-Bold']">Dispositivos:</span> {item.deviceCount}</p>
+                        <p><span>Dispositivos:</span> {item.deviceCount}</p>
                     </>
                 );
             case "devices":
@@ -48,8 +47,8 @@ const ElementCard = ({ item, type, onDelete, onSave }) => {
                             <div><span className="font-['Helvetica-Bold']">Dispositivo:</span> <span className="truncate">{item.name}</span></div>
                         </div>
                         <div className="mt-2">
-                            <div><span className="font-['Helvetica-Bold']">Aula:</span> {item.space ? item.space.name : 'Aula no disponible'}</div>
-                            <div><span className="font-['Helvetica-Bold']">Edificio:</span> {item.building ? item.building.name : 'Edificio no disponible'}</div>
+                            <div><span>Aula:</span> {item.space ? item.space.name : 'Aula no disponible'}</div>
+                            <div><span>Edificio:</span> {item.building ? item.building.name : 'Edificio no disponible'}</div>
                         </div>
                     </>
                 );

@@ -53,6 +53,11 @@ const BuildingsPage = () => {
             console.error("Error al actualizar el edificio:", err);
         }
     };
+    
+    const handleBuildingClick = (buildingId) => {
+        localStorage.setItem("selectedBuildingId", buildingId);
+        navigate(`/classrooms`);
+    };
 
     const filteredBuildings = buildings.filter(building =>
         building.name.toLowerCase().includes(search.toLowerCase())
