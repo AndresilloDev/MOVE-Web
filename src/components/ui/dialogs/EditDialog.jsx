@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import ButtonBox from "../ui/ButtonBox";
-import InputBox from "../ui/InputBox";
+import ButtonBox from "../ButtonBox";
+import InputBox from "../InputBox";
 import Select from "react-select";
 
 const EditDialog = ({ isOpen, onClose, onSave, itemType, item, buildings }) => {

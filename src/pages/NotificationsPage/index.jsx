@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import SearchFilter from "../../components/layout/SearchFilter";
-import NotificationsTable from "../../components/layout/NotificationsTable";
+import SearchFilter from "../../components/ui/SearchFilter";
+import NotificationsTable from "../../components/ui/tables/NotificationsTable";
 
 export default function NotificationsPage() {
   const [search, setSearch] = useState("");

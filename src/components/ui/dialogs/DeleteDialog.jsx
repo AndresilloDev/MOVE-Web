@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import ButtonBox from "../ui/ButtonBox";
+import ButtonBox from "../ButtonBox";
 
 const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
   if (!isOpen) return null;

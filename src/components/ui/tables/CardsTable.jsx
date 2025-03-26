@@ -1,4 +1,4 @@
-import ElementCard from "./ElementCard";
+import ElementCard from "../cards/ElementCard";
 
 const CardsTable = ({ items = [], type, onDelete, onSave }) => {
     return (

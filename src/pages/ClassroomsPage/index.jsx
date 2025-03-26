@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { getSpaces, deleteSpace, updateSpace } from "../../api/spaces.api";
 import { getBuildings } from "../../api/buildings.api";
-import SearchFilter from "../../components/layout/SearchFilter";
-import CardsTable from "../../components/layout/CardsTable";
-import DeleteDialog from "../../components/layout/DeleteDialog";
-import EditDialog from "../../components/layout/EditDialog";
+import SearchFilter from "../../components/ui/SearchFilter";
+import CardsTable from "../../components/ui/tables/CardsTable";
+import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
+import EditDialog from "../../components/ui/dialogs/EditDialog";
 
 const ClassroomsPage = ({ buildingId }) => {
     const [spaces, setSpaces] = useState([]);
