@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-export default function NotificationsTable({ data, search }) {
+export default function NotificationsTable({ data = [], search }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const filteredData = data.filter(item =>
-    item.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    item.dispositivo.toLowerCase().includes(search.toLowerCase()) ||
-    item.sensor.toLowerCase().includes(search.toLowerCase())
-  );
+  // Optimización: Evita recalcular en cada render
+  const filteredData = useMemo(() => {
+    return data.filter(item =>
+      item.nombre.toLowerCase().includes(search.toLowerCase()) ||
+      item.dispositivo.toLowerCase().includes(search.toLowerCase()) ||
+      item.sensor.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [data, search]);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -37,42 +40,60 @@ export default function NotificationsTable({ data, search }) {
           </tr>
         </thead>
         <tbody>
-          {paginatedData.map((item, index) => (
-            <tr key={index}>
-              <td className="px-4 py-2 border-b border-black">{item.fecha}</td>
-              <td className="px-4 py-2 border-b border-black">{item.dispositivo}</td>
-              <td className="px-4 py-2 border-b border-black">{item.nombre}</td>
-              <td className="px-4 py-2 border-b border-black">{item.sensor}</td>
-              <td className="px-4 py-2 border-b border-black">
-                <button className="bg-action-primary text-black px-4 py-1 rounded-md shadow-md transition duration-300 hover:bg-action-hover hover:shadow-lg">
-                  Ver más
-                </button>
+          {paginatedData.length > 0 ? (
+            paginatedData.map((item) => (
+              <tr key={item.id || Math.random()}>
+                <td className="px-4 py-2 border-b border-black">{item.fecha}</td>
+                <td className="px-4 py-2 border-b border-black">{item.dispositivo}</td>
+                <td className="px-4 py-2 border-b border-black">{item.nombre}</td>
+                <td className="px-4 py-2 border-b border-black">{item.sensor}</td>
+                <td className="px-4 py-2 border-b border-black">
+                  <button className="bg-action-primary text-black px-4 py-1 rounded-md shadow-md transition duration-300 hover:bg-action-hover hover:shadow-lg">
+                    Ver más
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="5" className="px-4 py-2 text-center text-gray-500">
+                No hay notificaciones disponibles.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
       {/* Paginación */}
-      <div className="flex justify-end mt-8 space-x-2 text-black">
-        <button className="px-2 py-1" onClick={handlePrevious} disabled={currentPage === 1}>
-          <ChevronLeftIcon />
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => (
+      {totalPages > 1 && (
+        <div className="flex justify-end mt-8 space-x-2 text-black">
           <button
-            key={i + 1}
-            className={`px-2 py-1 text-black font-bold border border-black rounded-md ${
-              currentPage === i + 1 ? "bg-action-primary" : ""
-            }`}
-            onClick={() => setCurrentPage(i + 1)}
+            className="px-2 py-1"
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
           >
-            {i + 1}
+            <ChevronLeftIcon />
           </button>
-        ))}
-        <button className="px-2 py-1" onClick={handleNext} disabled={currentPage === totalPages}>
-          <ChevronRightIcon />
-        </button>
-      </div>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`px-2 py-1 text-black font-bold border border-black rounded-md ${
+                currentPage === i + 1 ? "bg-action-primary" : ""
+              }`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            className="px-2 py-1"
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRightIcon />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,21 +1,69 @@
-import api from './base.api';
+import api from "./base.api";
 
-export const getNotifications = async () => {
-    return await api.get('/notifications');
-}
+const endpoint = "/notifications";
 
-export const getNotification = async (id) => {
-    return await api.get(`/notifications/${id}`);
-}
+// Obtener todas las notificaciones NO archivadas
+export const getUnfiledNotifications = async () => {
+    try {
+        const response = await api.get(`${endpoint}/unfiled`);
+        return response.data;
+    } catch (error) {
+        console.error("getUnfiledNotifications error:", error);
+        return [];
+    }
+};
 
-export const fileNotification = async (data) => {
-    return await api.post('/notifications', data);
-}
-
+// Obtener todas las notificaciones archivadas
 export const getFiledNotifications = async () => {
-    return await api.get('/notifications/filed');
-}
+    try {
+        const response = await api.get(`${endpoint}/filed`);
+        return response.data;
+    } catch (error) {
+        console.error("getFiledNotifications error:", error);
+        return [];
+    }
+};
 
-export const getFiledNotification = async (id) => {
-    return await api.get(`/notifications/filed/${id}`);
-}
+// Obtener una notificación por ID
+export const getNotification = async (notificationId) => {
+    try {
+        const response = await api.get(`${endpoint}/${notificationId}`);
+        return response.data;
+    } catch (error) {
+        console.error("getNotification error:", error);
+        return {};
+    }
+};
+
+// Obtener una notificación archivada por ID
+export const getFiledNotification = async (notificationId) => {
+    try {
+        const response = await api.get(`${endpoint}/filed/${notificationId}`);
+        return response.data;
+    } catch (error) {
+        console.error("getFiledNotification error:", error);
+        return {};
+    }
+};
+
+// Crear una nueva notificación
+export const createNotification = async (notification) => {
+    try {
+        const response = await api.post(endpoint, notification);
+        return response.data;
+    } catch (error) {
+        console.error("createNotification error:", error);
+        return {};
+    }
+};
+
+// Archivar una notificación (cambiar su estado a false)
+export const fileNotification = async (notificationId) => {
+    try {
+        const response = await api.put(`${endpoint}/file/${notificationId}`);
+        return response.data;
+    } catch (error) {
+        console.error("fileNotification error:", error);
+        return {};
+    }
+};
