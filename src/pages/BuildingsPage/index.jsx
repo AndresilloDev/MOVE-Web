@@ -5,6 +5,7 @@ import CardsTable from "../../components/ui/tables/CardsTable";
 import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
 import EditDialog from "../../components/ui/dialogs/EditDialog";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "../../context/NotificationContext.jsx";
 
 const BuildingsPage = () => {
     const [buildings, setBuildings] = useState([]);
@@ -15,6 +16,7 @@ const BuildingsPage = () => {
     const [editDialog, setEditDialog] = useState({ isOpen: false, building: null });
 
     const navigate = useNavigate();
+    const { getError, getSuccess } = useNotification(); 
 
     useEffect(() => {
         fetchBuildings();
@@ -28,6 +30,7 @@ const BuildingsPage = () => {
         } catch (err) {
             console.log(err);
             setError("Error al obtener los edificios");
+            getError("Error al obtener los edificios"); 
         } finally {
             setLoading(false);
         }
@@ -39,8 +42,10 @@ const BuildingsPage = () => {
             await deleteBuilding(deleteDialog.building._id);
             setBuildings(buildings.filter(b => b._id !== deleteDialog.building._id));
             setDeleteDialog({ isOpen: false, building: null });
+            getSuccess("Edificio eliminado correctamente");
         } catch (err) {
             console.error("Error al eliminar el edificio:", err);
+            getError("Error al eliminar el edificio"); 
         }
     };
 
@@ -52,11 +57,13 @@ const BuildingsPage = () => {
             }
             setEditDialog({ isOpen: false, building: null });
             fetchBuildings();
+            getSuccess("Edificio actualizado correctamente"); 
         } catch (err) {
             console.error("Error al actualizar el edificio:", err);
+            getError("Error al actualizar el edificio"); 
         }
     };
-    
+
     const handleBuildingClick = (buildingId) => {
         localStorage.setItem("selectedBuildingId", buildingId);
         navigate(`/classrooms`);

@@ -5,8 +5,10 @@ import SearchFilter from "../../components/ui/SearchFilter";
 import CardsTable from "../../components/ui/tables/CardsTable";
 import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
 import EditDialog from "../../components/ui/dialogs/EditDialog";
+import { useNotification } from "../../context/NotificationContext.jsx"; // Importar correctamente el contexto
 
 const ClassroomsPage = ({ buildingId }) => {
+    const { getError, getSuccess } = useNotification(); // Usar las funciones correctas
     const [spaces, setSpaces] = useState([]);
     const [buildings, setBuildings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,7 +29,7 @@ const ClassroomsPage = ({ buildingId }) => {
             setSpaces(response.data.sort((a, b) => a.name.localeCompare(b.name)));
         } catch (err) {
             console.log(err);
-            setError("Error al obtener los espacios");
+            getError("Error al obtener los espacios"); // Usar getError en lugar de showNotification
         } finally {
             setLoading(false);
         }
@@ -35,10 +37,11 @@ const ClassroomsPage = ({ buildingId }) => {
 
     const fetchBuildings = async () => {
         try {
-            const response = await getBuildings(); 
+            const response = await getBuildings();
             setBuildings(response.data);
         } catch (err) {
             console.error("Error al obtener los edificios:", err);
+            getError("Error al obtener los edificios"); // Usar getError aquí también
         }
     };
 
@@ -48,8 +51,10 @@ const ClassroomsPage = ({ buildingId }) => {
             await deleteSpace(buildingId, deleteDialog.space._id);
             setSpaces(spaces.filter(s => s._id !== deleteDialog.space._id));
             setDeleteDialog({ isOpen: false, space: null });
+            getSuccess("Espacio eliminado correctamente"); // Mensaje de éxito
         } catch (err) {
             console.error("Error al eliminar el espacio:", err);
+            getError("Error al eliminar el espacio"); // Mensaje de error
         }
     };
 
@@ -59,8 +64,10 @@ const ClassroomsPage = ({ buildingId }) => {
             setSpaces(spaces.map(s => s._id === editedSpace._id ? editedSpace : s));
             setEditDialog({ isOpen: false, space: null });
             fetchSpaces();
+            getSuccess("Espacio actualizado correctamente"); // Mensaje de éxito
         } catch (err) {
             console.error("Error al actualizar el espacio:", err);
+            getError("Error al actualizar el espacio"); // Mensaje de error
         }
     };
 
