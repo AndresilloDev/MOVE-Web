@@ -25,9 +25,9 @@ export const getUser = async (userId) => {
 }
 
 //Actualizar un usuario
-export const updateUser = async (userId, user) => {
+export const updateUser = async (user) => {
     try {
-        const response = await api.put(`/${endpoint}/${userId}`, user);
+        const response = await api.put(endpoint, user);
         return response.data;
     } catch (error) {
         console.error("updateUser error:", error);

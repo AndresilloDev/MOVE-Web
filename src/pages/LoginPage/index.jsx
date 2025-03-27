@@ -17,12 +17,7 @@ export default function LoginPage() {
         }
 
         try {
-            const success = await handleLogin(user, password); 
-            if (success) {
-                getSuccess("Inicio de sesión exitoso");
-            } else {
-                getError("Usuario o contraseña incorrectos");
-            }
+            await handleLogin(user, password); 
         } catch (error) {
             getError("Ocurrió un error al iniciar sesión");
         }

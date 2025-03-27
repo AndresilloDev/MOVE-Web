@@ -5,11 +5,11 @@ import { NotificationProvider } from "./context/NotificationContext.jsx";
 
 function App() {
     return (
-        <AuthProvider>
-            <NotificationProvider>
-                <AppRouter />
-            </NotificationProvider>
-        </AuthProvider>
+        <NotificationProvider>
+            <AuthProvider>
+                    <AppRouter />
+            </AuthProvider>
+        </NotificationProvider>
     );
 }
 

@@ -3,6 +3,7 @@ import { login } from "../api/auth.api.js";
 import { logout } from "../api/auth.api.js";
 import { checkAuth } from "../api/auth.api.js";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "./NotificationContext.jsx";
 
 export const AuthContext = createContext();
 
@@ -13,6 +14,8 @@ export const AuthProvider = ({ children }) => {
     });
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+
+    const { getError, getSuccess } = useNotification();
 
     useEffect(() => {
         const validateSession = async () => {
@@ -32,16 +35,15 @@ export const AuthProvider = ({ children }) => {
                 setUser(response.data.user);
                 sessionStorage.setItem("user", JSON.stringify(response.data.user));
                 setError(null);
-                return true;
+                getSuccess("Inicio de sesión exitoso");
+                navigate("/");
 
             } else if (response.status === 401) {
                 setUser(null);
                 setError(true);
                 sessionStorage.removeItem("user");
-                return false;
-
+                getError("Usuario o contraseña incorrectos");
             }
-            navigate("/");
         } catch (err) {
             console.log('Error en la conexión:', err);
             setError(true);
@@ -58,8 +60,18 @@ export const AuthProvider = ({ children }) => {
         navigate("/");
     };
 
+    const updateProfile = async (user) => {
+        try {
+            setUser(user);
+            sessionStorage.setItem("user", JSON.stringify(user));
+            getSuccess("Perfil actualizado correctamente");
+        } catch (error) {
+            setError("Error al actualizar el perfil");
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, handleLogout, handleLogin, error }}>
+        <AuthContext.Provider value={{ user, handleLogout, handleLogin, error, updateProfile }}>
             {children}
         </AuthContext.Provider>
     );

@@ -11,9 +11,12 @@ export default function Sidebar() {
   const menuItems = [
     { icon: Cpu, name: "Dispositivos", path: "/devices" },
     { icon: Building, name: "Docencias", path: "/buildings" },
-    { icon: Users, name: "Usuarios", path: "/users" },
     { icon: Bell, name: "Notificaciones", path: "/notifications" },
   ];
+
+  if(user.isSuperAdmin) {
+    menuItems.push({ icon: Users, name: "Usuarios", path: "/users" });
+  }
 
   return (
     <div
@@ -92,24 +95,7 @@ export default function Sidebar() {
 
       <div className="flex-grow"></div>
 
-      {/* Perfil (junto al resto del menú) */}
-      <NavLink
-        to="/profile"
-        className={({ isActive }) =>
-          `flex items-center px-4 py-3 rounded-lg  ${
-            isActive ? "bg-action-primary text-black border border-secondary" : "hover:bg-gray-200"
-          } ${sidebarOpen ? "justify-start" : "justify-center"}` // Moved inside menu
-        }
-      >
-        <User className="w-6 h-6" />
-        <div
-          className={`overflow-hidden transition-[max-width] duration-300 ${
-            sidebarOpen ? "max-w-full ml-4" : "max-w-0"
-          }`}
-        >
-          <span className="text-sm truncate">Perfil</span>
-        </div>
-      </NavLink>
+      {/* Resto del menú */}
 
       {/* Separador */}
       <div className="border-t border-gray-300 my-4"></div>

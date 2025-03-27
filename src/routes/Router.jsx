@@ -21,6 +21,8 @@ import SelectedNotificationPage from "../pages/SelectedNotificationPage";
 import NotFoundPage from "../pages/404Page";
 
 import { AuthContext } from "../context/AuthContext";
+import MainLayout from "../components/layout/MainLayout";
+import ProtectedRoute from "../components/layout/ProtectedRoute";
 
 export const AppRouter = () => {
     const { user } = useContext(AuthContext);
@@ -32,7 +34,7 @@ export const AppRouter = () => {
 
     return (
         <Routes>
-            <Route element=<MainLayout />>
+            <Route element={<MainLayout />}>
                 <Route path="/" element={<HomePage />} />
 
                 {isLoggedIn && (
@@ -43,7 +45,9 @@ export const AppRouter = () => {
                         <Route path="buildings" element={<BuildingsPage />} />
                         <Route path="/classrooms/:id" element={<ClassroomsPage />} />
 
-                        <Route path="/users" element={<UsersPage />} />
+                        <Route element={<ProtectedRoute />}>
+                            <Route path="/users" element={<UsersPage />} />
+                        </Route>
 
                         <Route path="/notifications" element={<NotificationsPage />} />
                         <Route path="/filed-notifications" element={<FiledNotificationsPage />} />

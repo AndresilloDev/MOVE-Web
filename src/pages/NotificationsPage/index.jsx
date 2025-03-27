@@ -35,7 +35,7 @@ export default function NotificationsPage() {
     <div className="relative w-full min-h-screen overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
       <div className="relative z-10 p-6 transition-all duration-300">
         <SearchFilter search={search} setSearch={setSearch} />
-        <NotificationsTable data={notifications} search={search} />
+        <NotificationsTable data={notifications} search={search} /> 
       </div>
     </div>
   );
