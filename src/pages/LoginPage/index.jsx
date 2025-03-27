@@ -1,13 +1,32 @@
 import { AuthContext } from "../../context/AuthContext.jsx";
+import { useNotification } from "../../context/NotificationContext.jsx";
 import InputBox from "../../components/ui/InputBox";
 import ButtonBox from "../../components/ui/ButtonBox";
-import {useContext, useState} from "react";
-
+import { useContext, useState } from "react";
 
 export default function LoginPage() {
     const { handleLogin } = useContext(AuthContext);
+    const { getError, getSuccess } = useNotification();
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
+
+    const handleLoginClick = async () => {
+        if (!user || !password) {
+            getError("Todos los campos son obligatorios");
+            return;
+        }
+
+        try {
+            const success = await handleLogin(user, password); 
+            if (success) {
+                getSuccess("Inicio de sesión exitoso");
+            } else {
+                getError("Usuario o contraseña incorrectos");
+            }
+        } catch (error) {
+            getError("Ocurrió un error al iniciar sesión");
+        }
+    };
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen px-4 sm:px-8 mt-[-10vh]">
@@ -19,7 +38,7 @@ export default function LoginPage() {
                 <InputBox type="email" label="Usuario" translateX="-.7rem" setValue={setUser} inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
                 <InputBox type="password" label="Contraseña" translateX="-1rem" setValue={setPassword} inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
                 <a href="/recover-account" className="text-sm text-black underline self-end">Olvidé mi Contraseña</a>
-                <ButtonBox text="Inicia Sesión" width="100%" height="40px" onClick={() => handleLogin(user, password)}/>
+                <ButtonBox text="Inicia Sesión" width="100%" height="40px" onClick={handleLoginClick}/>
             </div>
         </div>
     );

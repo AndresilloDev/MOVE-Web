@@ -19,23 +19,25 @@ export const AuthProvider = ({ children }) => {
             if (response.status === 200) {
                 setUser(response.data.user);
                 localStorage.setItem("user", JSON.stringify(response.data.user));
-
+                setError(null);
+                return true; 
             } else if (response.status === 401) {
                 setUser(null);
                 setError(true);
-
+                return false; 
             }
         } catch (err) {
             console.log('Error en la conexión:', err);
             setError(true);
             setUser(null);
+            return false; 
         }
     };
 
     const handleLogout = () => {
         setUser(null);
         logout();
-        localStorage.removeItem("user"); // Eliminar usuario al cerrar sesión
+        localStorage.removeItem("user");
     };
 
     return (
