@@ -10,7 +10,7 @@ const SearchFilter = ({ search, setSearch, setOpenAddModal }) => {
                         type="text"
                         placeholder="Buscar..."
                         className="outline-none px-4 py-2 bg-transparent w-full"
-                        value={search}
+                        value={search || ""}
                         onChange={(e) => setSearch(e.target.value)}
                     />
                     <button className="bg-action-primary p-2 px-4 border-l border-gray-300">

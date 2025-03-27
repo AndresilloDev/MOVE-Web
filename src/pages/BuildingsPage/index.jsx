@@ -4,6 +4,7 @@ import SearchFilter from "../../components/ui/SearchFilter";
 import CardsTable from "../../components/ui/tables/CardsTable";
 import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
 import EditDialog from "../../components/ui/dialogs/EditDialog";
+import { useNavigate } from "react-router-dom";
 
 const BuildingsPage = () => {
     const [buildings, setBuildings] = useState([]);
@@ -12,6 +13,8 @@ const BuildingsPage = () => {
     const [search, setSearch] = useState("");
     const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, building: null });
     const [editDialog, setEditDialog] = useState({ isOpen: false, building: null });
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchBuildings();
