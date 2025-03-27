@@ -1,16 +1,28 @@
-import { createContext, useState } from "react";
+import {createContext, useEffect, useState} from "react";
 import { login } from "../api/auth.api.js";
 import { logout } from "../api/auth.api.js";
+import { checkAuth } from "../api/auth.api.js";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = sessionStorage.getItem("user");
         return storedUser ? JSON.parse(storedUser) : null;
     });
-
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const validateSession = async () => {
+            try { await checkAuth(); } catch {
+                setUser(null);
+                sessionStorage.removeItem("user");
+            }
+        };
+        validateSession();
+    }, []);
 
     const handleLogin = async (username, password) => {
         try {
@@ -18,26 +30,32 @@ export const AuthProvider = ({ children }) => {
 
             if (response.status === 200) {
                 setUser(response.data.user);
-                localStorage.setItem("user", JSON.stringify(response.data.user));
+                sessionStorage.setItem("user", JSON.stringify(response.data.user));
                 setError(null);
-                return true; 
+                return true;
+
             } else if (response.status === 401) {
                 setUser(null);
                 setError(true);
-                return false; 
+                sessionStorage.removeItem("user");
+                return false;
+
             }
+            navigate("/");
         } catch (err) {
             console.log('Error en la conexión:', err);
             setError(true);
             setUser(null);
-            return false; 
+            sessionStorage.removeItem("user");
+            return false;
         }
     };
 
     const handleLogout = () => {
         setUser(null);
         logout();
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
+        navigate("/");
     };
 
     return (

@@ -1,9 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 
-import MainLayout from "../components/layout/MainLayout";
-import HeaderOnlyLayout from "../components/layout/HeaderOnly";
-
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import RecoverAccountPage from "../pages/RecoverAccountPage";
@@ -35,7 +32,7 @@ export const AppRouter = () => {
 
     return (
         <Routes>
-            <Route element={isLoggedIn ? <MainLayout /> : <HeaderOnlyLayout />}>
+            <Route element=<MainLayout />>
                 <Route path="/" element={<HomePage />} />
 
                 {isLoggedIn && (

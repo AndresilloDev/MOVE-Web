@@ -1,17 +1,24 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import {useContext} from "react";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const MainLayout = () => {
+
+    const { user } = useContext(AuthContext);
+
   return (
     <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
-        <Header isLoggedIn={true}/>
+        <Header isLoggedIn={user !== null}/>
         <div className="flex h-full">
-            <div className="w-16">
-                <Sidebar />
-            </div>
+            { user && (
+                <div className="w-16">
+                    <Sidebar/>
+                </div>
+            )}
             <main className="flex-1 px-10">
-                <Outlet />
+                <Outlet/>
             </main>
         </div>
     </div>

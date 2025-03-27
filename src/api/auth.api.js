@@ -13,3 +13,7 @@ export const login = async (user, password) => {
 export const logout = async () => {
     return await api.post(`${endpoint}/logout`);
 };
+
+export const checkAuth = async () => {
+    return await api.get(`${endpoint}/checkAuth`);
+}

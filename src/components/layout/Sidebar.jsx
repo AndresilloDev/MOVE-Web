@@ -5,7 +5,7 @@ import { Home, Users, Bell, Building, LogOut, User, Cpu } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext.jsx";
 
 export default function Sidebar() {
-  const { handleLogout } = useContext(AuthContext);
+  const { user, handleLogout } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const menuItems = [
@@ -43,8 +43,8 @@ export default function Sidebar() {
             sidebarOpen ? "max-w-full ml-3" : "max-w-0"
           }`}
         >
-          <h3 className="text-sm font-semibold truncate">Bertin Humberto</h3>
-          <p className="text-xs text-gray-400 truncate">Super Admin</p>
+          <h3 className="text-sm font-semibold truncate">{user.name}</h3>
+          <p className="text-xs text-gray-400 truncate"></p>
         </div>
       </div>
 
