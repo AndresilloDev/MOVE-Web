@@ -1,8 +1,12 @@
+import io from 'socket.io-client';
 import api from './base.api';
 
-const endpoint = '/devices';
+const endpoint = '/sensorData';
+const SOCKET_URL = 'http://localhost:3000';
 
-//Obtener los valores de todos los sensores de un dispositivo
+// Create socket connection
+const socket = io(SOCKET_URL);
+
 export const getDeviceSensors = async (deviceId) => {
     try {
         const response = await api.get(`${endpoint}/${deviceId}/sensors`);
@@ -13,8 +17,7 @@ export const getDeviceSensors = async (deviceId) => {
     }
 };
 
-//Obtener los valores de un sensor específico en un rango de tiempo
-export const getAllSensorsDataInRange = async (deviceId, startDate, endDate) => {
+export const getAllSensorsDataInRange = async (deviceId, sensorName, startDate, endDate) => {
     const today = new Date();
     const lastWeek = new Date();
     lastWeek.setDate(today.getDate() - 7);
@@ -24,11 +27,27 @@ export const getAllSensorsDataInRange = async (deviceId, startDate, endDate) => 
 
     try {
         const response = await api.get(`${endpoint}/${deviceId}/sensors/data`, {
-            params: { startDate: formattedStartDate, endDate: formattedEndDate }
+            params: { 
+                sensorName,
+                startDate: formattedStartDate, 
+                endDate: formattedEndDate 
+            }
         });
         return response.data;
     } catch (error) {
         console.error("getAllSensorsDataInRange error:", error);
         return [];
     }
+};
+
+// Function to listen for real-time sensor updates
+export const listenToSensorUpdates = (callback) => {
+    socket.on('sensor-update', (data) => {
+        callback(data);
+    });
+
+    // Return a cleanup function
+    return () => {
+        socket.off('sensor-update');
+    };
 };
