@@ -60,10 +60,11 @@ export const createNotification = async (notification) => {
 // Archivar una notificación (cambiar su estado a false)
 export const fileNotification = async (notificationId) => {
     try {
-        const response = await api.put(`${endpoint}/file/${notificationId}`);
+        const response = await api.put(`${endpoint}/filed/${notificationId}`);
         return response.data;
     } catch (error) {
         console.error("fileNotification error:", error);
         return {};
     }
 };
+
