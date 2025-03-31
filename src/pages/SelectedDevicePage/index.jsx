@@ -14,20 +14,16 @@ const SelectedDevicePage = () => {
     const [sensors, setSensors] = useState([]);
     const [deviceInfo, setDeviceInfo] = useState({});
     const { getError } = useNotification();
-    useEffect(() => {
-      if (!deviceId) {
-        getError('No device selected');
-        return;
-      }
-  
+    useEffect(() => {;
       const fetchDeviceData = async () => {
         try {
-          const [sensorsData, deviceData] = await Promise.all([
-            getDeviceSensors(deviceId), 
-            getDevice(deviceId)
-          ]);
-          setSensors(sensorsData);
-          setDeviceInfo(deviceData);
+          const responseDevices = await getDevice(deviceId);
+          console.log('Device data:', responseDevices);
+          setDeviceInfo(responseDevices.data);
+
+          const responseSensors = await getDeviceSensors(deviceId);
+          console.log('Sensors data:', responseSensors);
+          setSensors(responseSensors.data);
         } catch (err) {
           console.error('Error fetching device data:', err);
           getError('Failed to load device information');

@@ -7,6 +7,7 @@ export const getDevices = async () => {
 };
 
 export const getDevice = async (deviceId) => {
+    console.log(`${endpoint}/${deviceId}`)
     return await api.get(`${endpoint}/${deviceId}`);
 };
 

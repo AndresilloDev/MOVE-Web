@@ -8,7 +8,7 @@ const SOCKET_URL = 'http://localhost:3000';
 const socket = io(SOCKET_URL);
 
 export const getDeviceSensors = async (deviceId) => {
-    return await api.get(`/${endpoint}/${deviceId}/sensors`);
+    return await api.get(`${endpoint}/${deviceId}/sensors`);
 };
 
 export const getAllSensorsDataInRange = async (deviceId, sensorName, startDate, endDate) => {
@@ -19,7 +19,7 @@ export const getAllSensorsDataInRange = async (deviceId, sensorName, startDate, 
     const formattedStartDate = startDate || lastWeek.toISOString();
     const formattedEndDate = endDate || today.toISOString();
 
-    return await api.get(`${endpoint}/${deviceId}/sensors/data`, {
+    return await api.get(`${endpoint}${deviceId}/sensors/data`, {
         params: { 
             sensorName,
             startDate: formattedStartDate, 
