@@ -1,7 +1,5 @@
-import {createContext, useEffect, useState} from "react";
-import { login } from "../api/auth.api.js";
-import { logout } from "../api/auth.api.js";
-import { checkAuth } from "../api/auth.api.js";
+import { createContext, useEffect, useState } from "react";
+import { login, logout, checkAuth } from "../api/auth.api.js";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "./NotificationContext.jsx";
 
@@ -12,14 +10,16 @@ export const AuthProvider = ({ children }) => {
         const storedUser = sessionStorage.getItem("user");
         return storedUser ? JSON.parse(storedUser) : null;
     });
+
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
     const { getError, getSuccess } = useNotification();
 
     useEffect(() => {
         const validateSession = async () => {
-            try { await checkAuth(); } catch {
+            try {
+                await checkAuth();
+            } catch {
                 setUser(null);
                 sessionStorage.removeItem("user");
             }
@@ -31,25 +31,22 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await login(username, password);
 
-            if (response.status === 200) {
+            if (response.status === 200 && response.data.user) {
                 setUser(response.data.user);
                 sessionStorage.setItem("user", JSON.stringify(response.data.user));
                 setError(null);
                 getSuccess("Inicio de sesión exitoso");
                 navigate("/");
-
-            } else if (response.status === 401) {
-                setUser(null);
-                setError(true);
-                sessionStorage.removeItem("user");
-                getError("Usuario o contraseña incorrectos");
+                return true; 
+            } else {
+                throw new Error(); 
             }
         } catch (err) {
-            console.log('Error en la conexión:', err);
-            setError(true);
             setUser(null);
+            setError(true);
             sessionStorage.removeItem("user");
-            return false;
+            getError("Usuario o contraseña incorrectos");
+            return false; 
         }
     };
 
@@ -58,6 +55,7 @@ export const AuthProvider = ({ children }) => {
         logout();
         sessionStorage.removeItem("user");
         navigate("/");
+        getSuccess("Cierre de sesión exitoso");
     };
 
     const updateProfile = async (user) => {
@@ -67,6 +65,7 @@ export const AuthProvider = ({ children }) => {
             getSuccess("Perfil actualizado correctamente");
         } catch (error) {
             setError("Error al actualizar el perfil");
+            getError("Error al actualizar el perfil");
         }
     };
 

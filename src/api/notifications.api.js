@@ -31,3 +31,4 @@ export const createNotification = async (notification) => {
 export const fileNotification = async (notificationId) => {
     return await api.put(`${endpoint}/file/${notificationId}`);
 };
+

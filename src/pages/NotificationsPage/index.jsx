@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
+import { getUnfiledNotifications } from "../../api/notifications.api"; 
+import { useNotification } from "../../context/NotificationContext"; 
 import SearchFilter from "../../components/ui/SearchFilter";
 import NotificationsTable from "../../components/ui/tables/NotificationsTable";
 
 export default function NotificationsPage() {
+  const { getError } = useNotification(); 
   const [search, setSearch] = useState("");
   const [notifications, setNotifications] = useState([]);
 
-  // Llamar a la API cuando se monte el componente
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/notifications/unfiled");
-        if (!response.ok) throw new Error("Error al obtener las notificaciones");
-        const data = await response.json();
-        
-        // Mapear los datos a la estructura esperada
+        const data = await getUnfiledNotifications();
+
+        if (!Array.isArray(data)) {
+          throw new Error("La respuesta de la API no es un array válido");
+        }
+
         const formattedData = data.map(notification => ({
           fecha: notification.date,
           dispositivo: `#${notification.device}`, 
@@ -25,6 +28,7 @@ export default function NotificationsPage() {
         setNotifications(formattedData);
       } catch (error) {
         console.error("Error al obtener notificaciones:", error);
+        getError("Error al obtener las notificaciones");
       }
     };
 
