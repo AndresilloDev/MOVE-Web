@@ -2,9 +2,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import ButtonBox from "../ButtonBox";
 
-const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
-  if (!isOpen) return null;
-
+const DeleteDeviceDialog = ({ onClose, onDelete, deviceName }) => {
   return (
     <div
       className="fixed inset-0 backdrop-blur-xs flex justify-center items-center z-50"
@@ -27,11 +25,11 @@ const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
         </button>
 
         {/* Título dinámico */}
-        <h2 className="text-2xl font-semibold mb-12 text-center">Eliminar {itemType}</h2>
+        <h2 className="text-2xl font-semibold mb-12 text-center">Eliminar Dispositivo</h2>
 
         {/* Contenido */}
         <p className="text-black text-center mb-6 text-xl">
-          ¿Estás seguro de que deseas eliminar <strong className="font-['Helvetica-Bold']">{itemName}</strong>?
+          ¿Estás seguro de que deseas eliminar <strong className="font-['Helvetica-Bold']">{deviceName}</strong>?
         </p>
 
         {/* Botones */}
@@ -44,4 +42,4 @@ const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
   );
 };
 
-export default DeleteDialog;
+export default DeleteDeviceDialog;

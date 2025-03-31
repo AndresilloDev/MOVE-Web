@@ -12,6 +12,11 @@ export const getBuilding = async (id) => {
     return await api.get(`${endpoint}/${id}`);
 }
 
+//Obtiene un edificio por nombre
+export const getBuildingByName = async (name) => {
+    return await api.get(`${endpoint}/name/${name}`);
+}
+
 //Crea un edificio
 export const createBuilding = async (building) => {
     return await api.post(`${endpoint}`, building);

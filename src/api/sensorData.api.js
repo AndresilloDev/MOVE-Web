@@ -1,16 +1,10 @@
 import api from './base.api';
 
-const endpoint = '/devices';
+const endpoint = '/sensorData';
 
 //Obtener los valores de todos los sensores de un dispositivo
 export const getDeviceSensors = async (deviceId) => {
-    try {
-        const response = await api.get(`${endpoint}/${deviceId}/sensors`);
-        return response.data;
-    } catch (error) {
-        console.error("getDeviceSensors error:", error);
-        return [];
-    }
+    return await api.get(`/${endpoint}/${deviceId}/sensors`);
 };
 
 //Obtener los valores de un sensor específico en un rango de tiempo
@@ -22,13 +16,10 @@ export const getAllSensorsDataInRange = async (deviceId, startDate, endDate) => 
     const formattedStartDate = startDate || lastWeek.toISOString();
     const formattedEndDate = endDate || today.toISOString();
 
-    try {
-        const response = await api.get(`${endpoint}/${deviceId}/sensors/data`, {
-            params: { startDate: formattedStartDate, endDate: formattedEndDate }
-        });
-        return response.data;
-    } catch (error) {
-        console.error("getAllSensorsDataInRange error:", error);
-        return [];
-    }
+    return await api.get(`/${endpoint}/${deviceId}/sensors/data`, {
+        params: {
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
+        },
+    });
 };
