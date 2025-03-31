@@ -18,7 +18,6 @@ export const createSpace = async (buildingId, space) => {
 }
 
 //Actualiza un espacio
-
 export const updateSpace = async (buildingId, id, space) => {
     return await api.put(`${endpoint}/${buildingId}/spaces/${id}`, space);
 }

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import ButtonBox from "../ButtonBox";
 import InputBox from "../InputBox";
-import { getBuildings, getBuildingByName } from "../../../api/buildings.api";
+import { getBuildings } from "../../../api/buildings.api";
 import { getSpaces } from "../../../api/spaces.api";
 
 const EditDeviceDialog = ({ onClose, onSave, device }) => {

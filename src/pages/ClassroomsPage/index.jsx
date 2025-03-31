@@ -1,25 +1,29 @@
 import { useState, useEffect } from "react";
 import { getSpaces, deleteSpace, updateSpace } from "../../api/spaces.api";
-import { getBuildings } from "../../api/buildings.api";
 import SearchFilter from "../../components/ui/SearchFilter";
-import CardsTable from "../../components/ui/tables/CardsTable";
 import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
-import EditDialog from "../../components/ui/dialogs/EditDialog";
-import { useNotification } from "../../context/NotificationContext.jsx"; // Importar correctamente el contexto
+import EditSpaceDialog from "../../components/ui/dialogs/EditSpaceDialog";
+import { useNotification } from "../../context/NotificationContext.jsx";
+import { useParams } from "react-router-dom";
+import { Loader } from "../../components/ui/Loader.jsx";
+import SpacesTable from "../../components/ui/tables/SpacesTable.jsx";
 
-const ClassroomsPage = ({ buildingId }) => {
-    const { getError, getSuccess } = useNotification(); // Usar las funciones correctas
+const ClassroomsPage = () => {
+    const { getError, getSuccess } = useNotification();
+
+    const { id: buildingId } = useParams();
     const [spaces, setSpaces] = useState([]);
-    const [buildings, setBuildings] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    
     const [search, setSearch] = useState("");
-    const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, space: null });
-    const [editDialog, setEditDialog] = useState({ isOpen: false, space: null });
+    
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
 
+    const [selectedSpace, setSelectedSpace] = useState(null);
+    
     useEffect(() => {
         fetchSpaces();
-        fetchBuildings();
     }, [buildingId]);
 
     const fetchSpaces = async () => {
@@ -27,34 +31,26 @@ const ClassroomsPage = ({ buildingId }) => {
             setLoading(true);
             const response = await getSpaces(buildingId);
             setSpaces(response.data.sort((a, b) => a.name.localeCompare(b.name)));
+            console.log(response.data);
         } catch (err) {
             console.log(err);
-            getError("Error al obtener los espacios"); // Usar getError en lugar de showNotification
+            getError("Error al obtener los espacios");
         } finally {
             setLoading(false);
         }
     };
 
-    const fetchBuildings = async () => {
-        try {
-            const response = await getBuildings();
-            setBuildings(response.data);
-        } catch (err) {
-            console.error("Error al obtener los edificios:", err);
-            getError("Error al obtener los edificios"); // Usar getError aquí también
-        }
-    };
-
     const handleDelete = async () => {
-        if (!deleteDialog.space) return;
+        if (!selectedSpace) return;
         try {
-            await deleteSpace(buildingId, deleteDialog.space._id);
-            setSpaces(spaces.filter(s => s._id !== deleteDialog.space._id));
-            setDeleteDialog({ isOpen: false, space: null });
-            getSuccess("Espacio eliminado correctamente"); // Mensaje de éxito
+            await deleteSpace(buildingId, selectedSpace._id);
+            setSpaces(spaces.filter(s => s._id !== selectedSpace._id));
+            setOpenDeleteDialog(false);
+            setSelectedSpace(null);
+            getSuccess("Espacio eliminado correctamente");
         } catch (err) {
             console.error("Error al eliminar el espacio:", err);
-            getError("Error al eliminar el espacio"); // Mensaje de error
+            getError("Error al eliminar el espacio");
         }
     };
 
@@ -62,58 +58,59 @@ const ClassroomsPage = ({ buildingId }) => {
         try {
             await updateSpace(buildingId, editedSpace._id, editedSpace);
             setSpaces(spaces.map(s => s._id === editedSpace._id ? editedSpace : s));
-            setEditDialog({ isOpen: false, space: null });
+            setOpenEditDialog(false);
+            setSelectedSpace(null);
             fetchSpaces();
-            getSuccess("Espacio actualizado correctamente"); // Mensaje de éxito
+            getSuccess("Espacio actualizado correctamente");
         } catch (err) {
             console.error("Error al actualizar el espacio:", err);
-            getError("Error al actualizar el espacio"); // Mensaje de error
+            getError("Error al actualizar el espacio");
         }
     };
-
-    const filteredSpaces = spaces.filter(space =>
-        space.name.toLowerCase().includes(search.toLowerCase())
-    );
-
-    if (loading) {
-        return (
-            <div>
-                <SearchFilter />
-                <div style={{ position: "absolute", left: "50%", top: "50%" }}>
-                    <div className="loader"></div>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) return <p>{error}</p>;
 
     return (
         <div>
             <SearchFilter search={search} setSearch={setSearch} />
-            <CardsTable
-                items={filteredSpaces}
-                type="spaces"
-                onDelete={(space) => setDeleteDialog({ isOpen: true, space })}
-                onSave={(space) => setEditDialog({ isOpen: true, space })}
-            />
-
-            <DeleteDialog
-                isOpen={deleteDialog.isOpen}
-                onClose={() => setDeleteDialog({ isOpen: false, space: null })}
-                onDelete={handleDelete}
-                itemType="spaces"
-                itemName={deleteDialog.space?.name}
-            />
-
-            <EditDialog
-                isOpen={editDialog.isOpen}
-                onClose={() => setEditDialog({ isOpen: false, space: null })}
-                onSave={handleSave}
-                itemType="spaces"
-                item={editDialog.space}
-                buildings={buildings}
-            />
+            { loading ? (
+                <Loader />
+            ) : (
+                <>
+                    <SpacesTable
+                        spaces={spaces}
+                        onDelete={(space) => {
+                            setOpenDeleteDialog(true);
+                            setSelectedSpace(space);
+                        }}
+                        onSave={(space) => {
+                            setOpenEditDialog(true);
+                            setSelectedSpace(space);
+                        }}
+                    />
+    
+                    {openDeleteDialog && (
+                        <DeleteDialog
+                            onClose={() => {
+                                setOpenDeleteDialog(false);
+                                setSelectedSpace(null);
+                            }}
+                            onDelete={handleDelete}
+                            itemType="spaces"
+                            itemName={selectedSpace?.name}
+                        />
+                    )}
+    
+                    {openEditDialog && (
+                        <EditSpaceDialog
+                            onClose={() => {
+                                setOpenEditDialog(false);
+                                setSelectedSpace(null);
+                            }}
+                            onSave={handleSave}
+                            space={selectedSpace}
+                        />
+                    )}
+                </>
+            ) }
         </div>
     );
 };

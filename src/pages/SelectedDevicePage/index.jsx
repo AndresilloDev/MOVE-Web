@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   getDeviceSensors, 
   getAllSensorsDataInRange, 
@@ -6,17 +6,17 @@ import {
 } from '../../api/sensorData.api';
 import { getDevice } from '../../api/devices.api';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useNotification } from '../../context/NotificationContext';
 
 const SelectedDevicePage = () => {
     const { id: deviceId } = useParams();
     const navigate = useNavigate();
     const [sensors, setSensors] = useState([]);
     const [deviceInfo, setDeviceInfo] = useState({});
-    const [error, setError] = useState(null);
-  
+    const { getError } = useNotification();
     useEffect(() => {
       if (!deviceId) {
-        setError('No device selected');
+        getError('No device selected');
         return;
       }
   
@@ -30,7 +30,7 @@ const SelectedDevicePage = () => {
           setDeviceInfo(deviceData);
         } catch (err) {
           console.error('Error fetching device data:', err);
-          setError('Failed to load device information');
+          getError('Failed to load device information');
           navigate('/devices');
         }
       };
@@ -42,15 +42,6 @@ const SelectedDevicePage = () => {
   
       return () => clearInterval(interval); // Limpiar el intervalo cuando el componente se desmonte
     }, [deviceId, navigate]);
-
-  if (error) {
-    return (
-      <div className="container mx-auto p-4 text-red-600">
-        <h1 className="text-2xl font-bold">Error</h1>
-        <p>{error}</p>
-      </div>
-    );
-  }
 
   if (!deviceInfo.name) {
     return (

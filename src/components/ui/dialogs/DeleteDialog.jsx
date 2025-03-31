@@ -2,9 +2,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import ButtonBox from "../ButtonBox";
 
-const DeleteDialog = ({ isOpen, onClose, onDelete, itemType, itemName }) => {
-  if (!isOpen) return null;
-
+const DeleteDialog = ({ onClose, onDelete, itemType, itemName }) => {
   return (
     <div
       className="fixed inset-0 backdrop-blur-xs flex justify-center items-center z-50"

@@ -4,18 +4,20 @@ import SearchFilter from "../../components/ui/SearchFilter";
 import DevicesTable from "../../components/ui/tables/DevicesTable";
 import EditDeviceDialog from "../../components/ui/dialogs/EditDeviceDialog";
 import { Loader } from "../../components/ui/Loader";
-import DeleteDeviceDialog from "../../components/ui/dialogs/DeleteDeviceDialog";
+import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
+import { useNotification } from "../../context/NotificationContext";
 
 const DevicesPage = () => {
-    const [devices, setDevices] = useState([]);
+    const [devices, setDevices] = useState([]); 
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [search, setSearch] = useState("");
 
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     
     const [selectedDevice, setSelectedDevice] = useState(null);
+
+    const { getError } = useNotification();
 
     useEffect(() => {
         fetchDevices();
@@ -28,7 +30,7 @@ const DevicesPage = () => {
             setDevices(response.data.sort((a, b) => a.name.localeCompare(b.name)));
         } catch (err) {
             console.log(err);
-            setError("Error al obtener los dispositivos");
+            getError("Error al obtener los dispositivos");
         } finally {
             setLoading(false);
         }
@@ -83,13 +85,14 @@ const DevicesPage = () => {
                     />
 
                     { openDeleteDialog && (
-                        <DeleteDeviceDialog
+                        <DeleteDialog
                             onClose={() => {
                                 setOpenDeleteDialog(false);
                                 setSelectedDevice(null);
                             }}
                             onDelete={handleDelete}
-                            deviceName={selectedDevice.name}
+                            itemType="dispositivo"
+                            itemName={selectedDevice.name}
                         />
                     )}
             
