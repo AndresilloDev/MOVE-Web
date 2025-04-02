@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { login, logout, checkAuth } from "../api/auth.api.js";
-import { useNavigate } from "react-router-dom";
+import { login, logout, checkAuth, recoverPassword, changePassword } from "../api/auth.api.js";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import { useNotification } from "./NotificationContext.jsx";
 
 export const AuthContext = createContext();
@@ -11,9 +11,9 @@ export const AuthProvider = ({ children }) => {
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const [error, setError] = useState(null);
     const navigate = useNavigate();
     const { getError, getSuccess } = useNotification();
+    const [queryParams] = useSearchParams()
 
     useEffect(() => {
         const validateSession = async () => {
@@ -34,16 +34,12 @@ export const AuthProvider = ({ children }) => {
             if (response.status === 200 && response.data.user) {
                 setUser(response.data.user);
                 sessionStorage.setItem("user", JSON.stringify(response.data.user));
-                setError(null);
                 getSuccess("Inicio de sesión exitoso");
                 navigate("/");
                 return true; 
-            } else {
-                throw new Error(); 
             }
-        } catch (err) {
+        } catch {
             setUser(null);
-            setError(true);
             sessionStorage.removeItem("user");
             getError("Usuario o contraseña incorrectos");
             return false; 
@@ -63,14 +59,44 @@ export const AuthProvider = ({ children }) => {
             setUser(user);
             sessionStorage.setItem("user", JSON.stringify(user));
             getSuccess("Perfil actualizado correctamente");
-        } catch (error) {
-            setError("Error al actualizar el perfil");
+        } catch {
             getError("Error al actualizar el perfil");
         }
     };
 
+    const handleRecoverPassword = async (user) => {
+        try {
+            const response = await recoverPassword(user);
+            if (response.status === 200) {
+                getSuccess("Correo enviado");
+
+            }
+        } catch {
+            getError("Usuario no encontrado");
+
+        }
+    }
+
+    const handleChangePassword = async (newPassword, confirmPassword) => {
+        try {
+            if (newPassword !== confirmPassword) return getError("Las contraseñas no son iguales!");
+
+            const token =  queryParams.get("token");
+            const user = queryParams.get("user");
+
+            const response = await changePassword(newPassword, token, user);
+            if (response.status === 200) {
+                getSuccess("Contraseña cambiada correctamente");
+
+            }
+        } catch {
+            getError("Algo salio mal, intenta de nuevo más tarde");
+
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, handleLogout, handleLogin, error, updateProfile }}>
+        <AuthContext.Provider value={{ user, handleLogout, handleLogin, updateProfile, handleRecoverPassword, handleChangePassword }}>
             {children}
         </AuthContext.Provider>
     );

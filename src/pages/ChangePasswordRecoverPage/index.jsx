@@ -1,49 +1,27 @@
-import React, { useState, useRef } from "react";
+import React, {useState, useContext} from "react";
 import ButtonBox from "../../components/ui/ButtonBox";
+import InputBox from "../../components/ui/InputBox.jsx";
+import {AuthContext} from "../../context/AuthContext.jsx";
 
 const ChangePasswordRecoverPage = () => {
-    const [code, setCode] = useState(["", "", "", "", ""]);
-    const inputRefs = useRef([]);
+    const { handleChangePassword } = useContext(AuthContext);
 
-    const handleChange = (index, value) => {
-        if (!/^[a-zA-Z0-9]?$/.test(value)) return;
-
-        const newCode = [...code];
-        newCode[index] = value;
-        setCode(newCode);
-
-        if (value && index < code.length - 1) {
-            inputRefs.current[index + 1]?.focus();
-        }
-    };
-
-    const handleKeyDown = (index, e) => {
-        if (e.key === "Backspace" && !code[index] && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen mt-[-10vh]">
-            <div className="p-6 flex flex-col items-center w-96">
-                <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center text-black">Confirmar tu cuenta</h2>
-                <div className="flex space-x-3 mb-6">
-                    {code.map((digit, index) => (
-                        <input
-                            key={index}
-                            ref={(el) => (inputRefs.current[index] = el)}
-                            className={`h-12 w-12 text-center text-lg text-black bg-white border border-opacity-50 rounded-md outline-none transition duration-200 ${
-                                code[index] ? "border-black" : "border-gray-300"
-                            }`}
-                            maxLength={1}
-                            type="text"
-                            value={digit}
-                            onChange={(e) => handleChange(index, e.target.value)}
-                            onKeyDown={(e) => handleKeyDown(index, e)}
-                        />
-                    ))}
-                </div>
-                <ButtonBox text="Confirmar" width="50%" height="40px" onClick={() => console.log("Código ingresado:", code.join(""))} />
+        <div className="flex flex-col justify-center items-center min-h-screen px-4 sm:px-8 mt-[-10vh]">
+            <h1 className="text-3xl font-semibold text-black text-center sm:text-4xl">
+                Cambiar contraseña
+            </h1>
+
+            <div
+                className="flex flex-col space-y-4 justify-center items-center w-full max-w-xs sm:max-w-md lg:max-w-2md mt-6">
+                <InputBox type="password" label="Nueva Contraseña" translateX="-1rem" setValue={setNewPassword}
+                          inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
+                <InputBox type="password" label="Confirmar Contraseña" translateX="-1rem" setValue={setConfirmPassword}
+                          inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
+                <ButtonBox text="Inicia Sesión" width="100%" height="40px" onClick={handleChangePassword(newPassword, confirmPassword)}/>
             </div>
         </div>
     );

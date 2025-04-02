@@ -17,3 +17,17 @@ export const logout = async () => {
 export const checkAuth = async () => {
     return await api.get(`${endpoint}/checkAuth`);
 }
+
+export const recoverPassword = async (user) => {
+    return await api.post(`${endpoint}/recoverPassword`, {
+        user: user,
+    })
+}
+
+export const changePassword = async (password, token, user) => {
+    return await api.post(`${endpoint}/changePassword`, {
+        password: password,
+        token: token,
+        user: user
+    })
+}
