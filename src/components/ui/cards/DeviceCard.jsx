@@ -42,8 +42,8 @@ const DeviceCard = ({ device, onDelete, onSave }) => {
                     <div><span className="font-['Helvetica-Bold']">Dispositivo:</span> <span className="truncate">{device.name}</span></div>
                 </div>
                 <div className="mt-2">
-                    <div><span>Aula:</span> {device.space ? device.space.name : 'Sin Aula'}</div>
                     <div><span>Edificio:</span> {device.building ? device.building.name : 'Sin Edificio'}</div>
+                    <div><span>Aula:</span> {device.space ? device.space.name : 'Sin Aula'}</div>
                 </div>
             </div>
         </div>

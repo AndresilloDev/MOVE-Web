@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { getBuildings, deleteBuilding, updateBuilding } from "../../api/buildings.api";
 import SearchFilter from "../../components/ui/SearchFilter";
 import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
 import EditBuildingDialog from "../../components/ui/dialogs/EditBuildingDialog.jsx";
 import { useNotification } from "../../context/NotificationContext.jsx";
 import BuildingsTable from "../../components/ui/tables/BuildingsTable.jsx";
 import { Loader } from "../../components/ui/Loader.jsx";
+import AddBuildingDialog from "../../components/ui/dialogs/AddBuildingDialog.jsx";
+import { getBuildings, deleteBuilding, updateBuilding, createBuilding } from "../../api/buildings.api";
 
 const BuildingsPage = () => {
     const [buildings, setBuildings] = useState([]);
@@ -15,6 +16,7 @@ const BuildingsPage = () => {
     const [openDeleteDialog, setOpenDeleteDilog] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState(null);
+    const [openAddBuilding, setOpenAddBuilding] = useState(false);
 
     const { getError, getSuccess } = useNotification(); 
 
@@ -28,7 +30,7 @@ const BuildingsPage = () => {
             const response = await getBuildings();
             setBuildings(response.data.sort((a, b) => a.name.localeCompare(b.name)));
         } catch (err) {
-            console.log(err);
+            console.error(err);
             getError("Error al obtener los edificios"); 
         } finally {
             setLoading(false);
@@ -49,7 +51,7 @@ const BuildingsPage = () => {
         }
     };
 
-    const handleSave = async (editedBuilding) => {
+    const handleEdit = async (editedBuilding) => {
         try {
             const response = await updateBuilding(editedBuilding._id, editedBuilding);
             if (response.data) {
@@ -65,13 +67,26 @@ const BuildingsPage = () => {
         }
     };
 
+    const handleAdd = async (newBuilding) => {
+        try {
+            await createBuilding(newBuilding);
+            setOpenAddBuilding(false);
+            setSelectedBuilding(null);
+            fetchBuildings();
+            getSuccess("Edificio creado correctamente");
+        } catch (err) {
+            console.error("Error al crear el edificio:", err);
+            getError("Error al crear el edificio");
+        }
+    }
+
     const filteredBuildings = buildings.filter(building =>
         building.name.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
         <div>
-            <SearchFilter search={search} setSearch={setSearch} />
+            <SearchFilter search={search} setSearch={setSearch} setOpenAddModal={setOpenAddBuilding} />
             {loading ? (
                 <Loader />
             ) : (
@@ -106,8 +121,18 @@ const BuildingsPage = () => {
                                 setOpenEditDialog(false);
                                 setSelectedBuilding(null);
                             }}
-                            onSave={handleSave}
+                            onSave={handleEdit}
                             building={selectedBuilding}
+                        />
+                    )}
+
+                    {openAddBuilding && (
+                        <AddBuildingDialog
+                            onClose={() => {
+                                setOpenAddBuilding(false);
+                                setSelectedBuilding(null);
+                            }}
+                            onSave={handleAdd}
                         />
                     )}
                 </>

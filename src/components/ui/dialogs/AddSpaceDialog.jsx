@@ -3,20 +3,21 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import ButtonBox from "../ButtonBox";
 import InputBox from "../InputBox";
+import { Add } from "@mui/icons-material";
 
-const EditSpaceDialog = ({ onClose, onSave, space }) => {
-    const [editedItem, setEditedItem] = useState(space || {});
+export const AddSpaceDialog = ({ onClose, onSave }) => {
+    const [spaceName, setSpaceName] = useState("");
 
-    const handleChange = (name, value) => {
-        setEditedItem((prevState) => {
-            const updatedState = { ...prevState, [name]: value };
-            return updatedState;
-        });
-    };
+    const handleSave = () => {
+        const space = {
+            name: spaceName,
+        };
+        onSave(space);
+    };   
 
     return (
         <div
-            className="fixed inset-0 backdrop-blur-xs flex justify-center items-center spaces-center z-50 px-4"
+            className="fixed inset-0 backdrop-blur-xs flex justify-center items-center z-50 px-4"
             onClick={onClose}
         >
             <motion.div
@@ -34,30 +35,28 @@ const EditSpaceDialog = ({ onClose, onSave, space }) => {
                     <X size={24} />
                 </button>
 
-                <h2 className="text-xl sm:text-2xl font-semibold mb-8 text-center">Editar Espacio</h2>
+                <h2 className="text-xl sm:text-2xl font-semibold mb-8 text-center">Agregar Espacio</h2>
 
                 <div className="mb-4 sm:mb-6">
-                <>
-                        <InputBox
-                            type="text"
-                            label="Aula"
-                            inputClassName="my-4 bg-secondary-background"
-                            spanClassName="bg-secondary-background top-0"
-                            translateX="-0.75rem"
-                            translateY="-1.5rem"
-                            value={editedItem.name}
-                            setValue={(value) => handleChange("name", value)}
-                        />
-                    </>
+                    <InputBox
+                        type="text"
+                        label="Nombre"
+                        inputClassName="my-4 bg-secondary-background"
+                        spanClassName="bg-secondary-background top-0"
+                        translateX="-0.8rem"
+                        translateY="-1.5rem"
+                        value={spaceName}
+                        setValue={(value) => setSpaceName(value)}
+                    />
                 </div>
 
                 <div className="flex justify-center gap-4 mt-8 sm:mt-12">
                     <ButtonBox text="Cancelar" onClick={onClose} className="px-6 sm:px-12 bg-transparent hover:bg-secondary border border-black" />
-                    <ButtonBox text="Guardar" onClick={() => onSave(editedItem)} className="px-6 sm:px-12" />
+                    <ButtonBox text="Guardar" onClick={handleSave} className="px-6 sm:px-12" />
                 </div>
             </motion.div>
         </div>
     );
 };
 
-export default EditSpaceDialog;
+export default AddSpaceDialog;

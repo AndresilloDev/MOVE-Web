@@ -1,5 +1,5 @@
 import {useContext, useState} from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
 import { Home, Users, Bell, Building, LogOut, User, Cpu } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext.jsx";
@@ -8,6 +8,20 @@ export default function Sidebar() {
   const { user, handleLogout } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const location = useLocation();
+
+  const isActivePath = (path) => {
+    if (location.pathname.startsWith("/device/")) return path === "/devices";
+    if (location.pathname.startsWith("/classrooms/")) return path === "/buildings";
+    if (
+      location.pathname === "/filed-notifications" ||
+      location.pathname.startsWith("/notification/")
+    )
+      return path === "/notifications";
+
+    return location.pathname === path;
+  };
+
   const menuItems = [
     { icon: Cpu, name: "Dispositivos", path: "/devices" },
     { icon: Building, name: "Docencias", path: "/buildings" },
@@ -75,9 +89,11 @@ export default function Sidebar() {
           <NavLink
             key={index}
             to={item.path}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-3 rounded-lg  ${
-                isActive ? "bg-action-primary text-black border border-secondary" : "hover:bg-gray-200"
+            className={() =>
+              `flex items-center px-4 py-3 rounded-lg ${
+                isActivePath(item.path)
+                  ? "bg-action-primary text-black border border-secondary"
+                  : "hover:bg-gray-200"
               } ${sidebarOpen ? "justify-start" : "justify-center"}`
             }
           >

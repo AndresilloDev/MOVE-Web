@@ -1,12 +1,15 @@
 import { useState, useMemo } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { ElementsNotAvailable } from "../ElementsNotAvailable";
+import { useNavigate } from "react-router-dom";
 
 export default function NotificationsTable({ data = [], search }) {
+  const navigate = useNavigate();
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Optimización: Evita recalcular en cada render
   const filteredData = useMemo(() => {
     return data.filter(item =>
       item.nombre.toLowerCase().includes(search.toLowerCase()) ||
@@ -29,6 +32,7 @@ export default function NotificationsTable({ data = [], search }) {
 
   return (
     <div className="mt-8">
+      {paginatedData.length > 0 ? (
       <table className="w-full border-collapse text-left">
         <thead>
           <tr>
@@ -40,29 +44,28 @@ export default function NotificationsTable({ data = [], search }) {
           </tr>
         </thead>
         <tbody>
-          {paginatedData.length > 0 ? (
-            paginatedData.map((item) => (
-              <tr key={item.id || Math.random()}>
+            {paginatedData.map((item) => (
+              <tr key={item._id || Math.random()}>
                 <td className="px-4 py-2 border-b border-black">{item.fecha}</td>
                 <td className="px-4 py-2 border-b border-black">{item.dispositivo}</td>
                 <td className="px-4 py-2 border-b border-black">{item.nombre}</td>
                 <td className="px-4 py-2 border-b border-black">{item.sensor}</td>
                 <td className="px-4 py-2 border-b border-black">
-                  <button className="bg-action-primary text-black px-4 py-1 rounded-md shadow-md transition duration-300 hover:bg-action-hover hover:shadow-lg">
+                  <button 
+                    className="bg-action-primary text-black px-4 py-1 rounded-md shadow-md transition duration-300 hover:bg-action-hover hover:shadow-lg"
+                    onClick={() => navigate(`/notification/${item._id}`)}
+                  >
                     Ver más
                   </button>
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="5" className="px-4 py-2 text-center text-gray-500">
-                No hay notificaciones disponibles.
-              </td>
-            </tr>
+            )
           )}
         </tbody>
       </table>
+      ) : (
+        <ElementsNotAvailable element = "notificaciones" />
+      )}
 
       {/* Paginación */}
       {totalPages > 1 && (

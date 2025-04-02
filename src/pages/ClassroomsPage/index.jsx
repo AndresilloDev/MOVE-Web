@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getSpaces, deleteSpace, updateSpace } from "../../api/spaces.api";
+import { getSpaces, deleteSpace, updateSpace, createSpace } from "../../api/spaces.api";
 import SearchFilter from "../../components/ui/SearchFilter";
 import DeleteDialog from "../../components/ui/dialogs/DeleteDialog";
 import EditSpaceDialog from "../../components/ui/dialogs/EditSpaceDialog";
@@ -7,6 +7,7 @@ import { useNotification } from "../../context/NotificationContext.jsx";
 import { useParams } from "react-router-dom";
 import { Loader } from "../../components/ui/Loader.jsx";
 import SpacesTable from "../../components/ui/tables/SpacesTable.jsx";
+import AddSpaceDialog from "../../components/ui/dialogs/AddSpaceDialog.jsx";
 
 const ClassroomsPage = () => {
     const { getError, getSuccess } = useNotification();
@@ -19,6 +20,7 @@ const ClassroomsPage = () => {
     
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [openAddSpaceDialog, setOpenAddSpaceDialog] = useState(false);
 
     const [selectedSpace, setSelectedSpace] = useState(null);
     
@@ -31,7 +33,6 @@ const ClassroomsPage = () => {
             setLoading(true);
             const response = await getSpaces(buildingId);
             setSpaces(response.data.sort((a, b) => a.name.localeCompare(b.name)));
-            console.log(response.data);
         } catch (err) {
             console.log(err);
             getError("Error al obtener los espacios");
@@ -54,7 +55,7 @@ const ClassroomsPage = () => {
         }
     };
 
-    const handleSave = async (editedSpace) => {
+    const handleEdit = async (editedSpace) => {
         try {
             await updateSpace(buildingId, editedSpace._id, editedSpace);
             setSpaces(spaces.map(s => s._id === editedSpace._id ? editedSpace : s));
@@ -68,9 +69,22 @@ const ClassroomsPage = () => {
         }
     };
 
+    const handleAdd = async (space) => {
+        try {
+            await createSpace(buildingId, space);
+            setOpenAddSpaceDialog(false);
+            getSuccess("Espacio creado correctamente");
+            fetchSpaces();
+        } catch (err) {
+            console.error("Error al crear el espacio:", err);
+            getError("Error al crear el espacio");
+        }
+    }
+
+
     return (
         <div>
-            <SearchFilter search={search} setSearch={setSearch} />
+            <SearchFilter search={search} setSearch={setSearch} setOpenAddModal={setOpenAddSpaceDialog} />
             { loading ? (
                 <Loader />
             ) : (
@@ -105,8 +119,18 @@ const ClassroomsPage = () => {
                                 setOpenEditDialog(false);
                                 setSelectedSpace(null);
                             }}
-                            onSave={handleSave}
+                            onSave={handleEdit}
                             space={selectedSpace}
+                        />
+                    )}
+
+                    {openAddSpaceDialog && (
+                        <AddSpaceDialog
+                            onClose={() => {
+                                setOpenAddSpaceDialog(false);
+                                setSelectedSpace(null);
+                            }}
+                            onSave={handleAdd}
                         />
                     )}
                 </>

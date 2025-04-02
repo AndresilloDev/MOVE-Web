@@ -9,9 +9,9 @@ const MainLayout = () => {
     const { user } = useContext(AuthContext);
 
   return (
-    <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+    <div className="absolute inset-0 -z-10 min-h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
         <Header isLoggedIn={user !== null}/>
-        <div className="flex h-full">
+        <div className="flex flex-row flex-1">
             { user && (
                 <div className="w-16">
                     <Sidebar/>

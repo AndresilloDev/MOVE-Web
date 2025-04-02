@@ -17,7 +17,7 @@ const DevicesPage = () => {
     
     const [selectedDevice, setSelectedDevice] = useState(null);
 
-    const { getError } = useNotification();
+    const { getError, getSuccess } = useNotification();
 
     useEffect(() => {
         fetchDevices();
@@ -43,8 +43,10 @@ const DevicesPage = () => {
             setDevices(devices.filter(d => d._id !== selectedDevice._id));
             setOpenDeleteDialog(false);
             setSelectedDevice(null);
+            getSuccess("Dispositivo eliminado correctamente");
         } catch (err) {
             console.error("Error al eliminar el dispositivo:", err);
+            getError("Error al eliminar el dispositivo");
         }
     };
 
@@ -56,14 +58,22 @@ const DevicesPage = () => {
             setOpenEditDialog(false);
             setSelectedDevice(null);
             fetchDevices();
+            getSuccess("Dispositivo actualizado correctamente");
         } catch (err) {
             console.error("Error al actualizar el dispositivo:", err);
+            getError("Error al actualizar el dispositivo");
         }
     };
 
-    const filteredDevices = devices.filter(device =>
-        device.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredDevices = devices.filter(device => {
+        const lowerSearch = search.toLowerCase();
+    
+        return (
+            device.name.toLowerCase().includes(lowerSearch) || 
+            (device.building?.name?.toLowerCase().includes(lowerSearch) || false) || 
+            (device.space?.name?.toLowerCase().includes(lowerSearch) || false)
+        );
+    });
 
     return (
         <div>

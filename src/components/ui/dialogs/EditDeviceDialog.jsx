@@ -47,7 +47,6 @@ const EditDeviceDialog = ({ onClose, onSave, device }) => {
             building: { name: buildingName },
             space: { name: spaceName },
         };
-        console.log("Edited Item:", editedItem);
         onSave(editedItem);
     };
 
@@ -92,8 +91,8 @@ const EditDeviceDialog = ({ onClose, onSave, device }) => {
                             value={buildingName}
                             onChange={(e) => {
                                 const selectedBuilding = buildings.find((b) => b.name === e.target.value);
-                                console.log("Selected Building:", selectedBuilding);
-                                setBuildingName(e.target.value);
+                                setBuildingName(e.target.value || "");
+                                setSpaceName("");
                                 if (selectedBuilding) {
                                     fetchSpaces(selectedBuilding._id);
                                 } else {
@@ -101,9 +100,8 @@ const EditDeviceDialog = ({ onClose, onSave, device }) => {
                                 }
                             }}                            
                         >
-                            <option value={buildingName}>{buildingName || "Seleccionar edificio"}</option>
+                            <option value="">Seleccionar edificio</option>
                             {buildings
-                                .filter((b) => b.name !== buildingName)
                                 .map((building) => (
                                     <option key={building.id} value={building.name}>
                                         {building.name}

@@ -12,17 +12,20 @@ export default function NotificationsPage() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const data = await getUnfiledNotifications();
+        const response = await getUnfiledNotifications();
 
-        if (!Array.isArray(data)) {
-          throw new Error("La respuesta de la API no es un array válido");
-        }
+        console.log("Response from API:", response.data);
 
-        const formattedData = data.map(notification => ({
-          fecha: notification.date,
+        const formattedData = response.data.map(notification => ({
+          fecha: new Date(notification.date).toLocaleDateString("es-MX", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }),
           dispositivo: `#${notification.device}`, 
           nombre: notification.name,
-          sensor: notification.sensor
+          sensor: notification.sensor,
+          _id: notification._id,
         }));
 
         setNotifications(formattedData);
@@ -35,11 +38,17 @@ export default function NotificationsPage() {
     fetchNotifications();
   }, []);
 
+  const filteredNotifications = notifications.filter(notification =>
+    notification.nombre.toLowerCase().includes(search.toLowerCase()) ||
+    notification.dispositivo.toLowerCase().includes(search.toLowerCase()) ||
+    notification.sensor.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="relative w-full min-h-screen overflow-hidden" style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
       <div className="relative z-10 p-6 transition-all duration-300">
         <SearchFilter search={search} setSearch={setSearch} />
-        <NotificationsTable data={notifications} search={search} /> 
+        <NotificationsTable data={filteredNotifications} search={search} /> 
       </div>
     </div>
   );
