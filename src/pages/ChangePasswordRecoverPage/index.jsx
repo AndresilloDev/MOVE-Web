@@ -21,7 +21,7 @@ const ChangePasswordRecoverPage = () => {
                           inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
                 <InputBox type="password" label="Confirmar Contraseña" translateX="-1rem" setValue={setConfirmPassword}
                           inputClassName="bg-secondary-background" spanClassName="bg-secondary-background top-2.5"/>
-                <ButtonBox text="Inicia Sesión" width="100%" height="40px" onClick={handleChangePassword(newPassword, confirmPassword)}/>
+                <ButtonBox text="Actualizar contraseña" width="100%" height="40px" onClick={() => {{handleChangePassword(newPassword, confirmPassword)}}}/>
             </div>
         </div>
     );
