@@ -15,7 +15,7 @@ const SensorCard = ({ sensor, thresholds, className, isSelected, onClick }) => {
     'humidity': { min: 0, max: 100 },
     'co2': { min: 0, max: 3000 },
     'light': { min: 0, max: 3000 },
-    'sound': { min: 0, max: 120 }
+    'sound': { min: 0, max: 420 }
   };
 
   // Obtener el rango para este tipo de sensor (o usar valores por defecto)
@@ -130,18 +130,7 @@ const SensorCard = ({ sensor, thresholds, className, isSelected, onClick }) => {
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold mb-2 text-left text-gray-800">{translatedName}</h2>
         <div className="flex space-x-2">
-          <button 
-            className="p-2 rounded-full hover:bg-gray-100 transition"
-            title="Notificaciones"
-          >
-            <Bell className="w-5 h-5 text-gray-600" />
-          </button>
-          <button 
-            className="p-2 rounded-full hover:bg-gray-100 transition"
-            title="Configuración"
-          >
-            <Settings className="w-5 h-5 text-gray-600" />
-          </button>
+
         </div>
       </div>
       

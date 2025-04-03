@@ -7,14 +7,14 @@ export default function HomePage() {
           MONITOR DE VARIABLES DE ENTORNO
         </h1>
         <p className="font-helvetica text-base sm:text-lg font-normal mb-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur voluptas placeat numquam te.
+          Bienvenido a <strong>MOVE</strong>, conectate y comienza a monitorear las variables de tu enorno.
         </p>
       </div>
 
       {/* Sección de Imagen */}
       <div className="w-full lg:w-7/12 flex items-center justify-center p-6">
         <img
-          src="../../src/assets/dashboard.png"
+          src="../../src/assets/dash.png"
           alt="Monitor"
           className="max-w-full h-auto shadow-2xl rounded-2xl"
         />

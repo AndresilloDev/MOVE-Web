@@ -38,34 +38,33 @@ export default function Sidebar() {
         sidebarOpen ? "w-64" : "w-16"
       } rounded-r-2xl`}
     >
-      {/* Botón para abrir/cerrar */}
-      <button
-        onClick={toggleSidebar}
-        className="absolute top-3 -right-3 bg-white text-gray-700 p-1 rounded-full shadow-md border border-gray-300 hover:bg-gray-200 transition"
-      >
-        <FaAngleRight
-          className={`transition-transform duration-300 ${sidebarOpen ? "rotate-180" : "rotate-0"}`}
-        />
-      </button>
-
-      {/* Imagen de usuario */}
-      <div className="flex items-center pl-2 mb-6">
-        <img
-          src="https://randomuser.me/api/portraits/men/8.jpg"
-          alt="User"
-          className="w-12 h-12 rounded-lg object-cover duration-300"
-        />
-        <div
-          className={`overflow-hidden transition-[max-width] duration-300 ${
-            sidebarOpen ? "max-w-full ml-3" : "max-w-0"
-          }`}
+        <button
+          onClick={toggleSidebar}
+          className="absolute top-3 -right-3 bg-white text-gray-700 p-1 rounded-full shadow-md border border-gray-300 hover:bg-gray-200 transition"
         >
-          <h3 className="text-sm font-semibold truncate">{user.name}</h3>
-          <p className="text-xs text-gray-400 truncate"></p>
-        </div>
-      </div>
+          <FaAngleRight
+            className={`transition-transform duration-300 ${sidebarOpen ? "rotate-180" : "rotate-0"}`}
+          />
+        </button>
 
-      {/* Menú de navegación */}
+        {/* Inicial del usuario */}
+        <div className="flex items-center pl-2 mb-6">
+          <div
+            className="w-12 h-12 flex items-center justify-center bg-gray-300 text-black text-xl font-bold rounded-lg duration-300"
+          >
+            {user.name.charAt(0).toUpperCase()}
+          </div>
+          <div
+            className={`overflow-hidden transition-[max-width] duration-300 ${
+          sidebarOpen ? "max-w-full ml-3" : "max-w-0"
+            }`}
+          >
+            <h3 className="text-sm font-semibold truncate">{user.name}</h3>
+            <p className="text-xs text-gray-400 truncate"></p>
+          </div>
+        </div>
+
+        {/* Menú de navegación */}
       <nav className="flex flex-col space-y-2">
         <NavLink
           to="/"

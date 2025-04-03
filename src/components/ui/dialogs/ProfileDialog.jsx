@@ -22,7 +22,14 @@ export const ProfileDialog = ({ setOpenProfileDialog }) => {
 
     const handleEdit = async () => {
         try {
-            const updatedUser = await updateUser({ name, lastName });
+            console.log("Petición: ", {name, lastName})
+            const updatedUser = {
+                ...user,
+                name, 
+                lastName
+            }
+            console.log(updatedUser)
+            await updateUser(updatedUser);
             await updateProfile(updatedUser);
             setOpenProfileDialog(false);
         } catch (error) {
@@ -64,7 +71,7 @@ export const ProfileDialog = ({ setOpenProfileDialog }) => {
                         ref={lastNameRef}
                         className="w-full p-2 border border-gray-200 rounded"
                         value={lastName}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => setLastName(e.target.value)}
                     />
 
                     <button

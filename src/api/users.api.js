@@ -14,7 +14,7 @@ export const getUser = async (userId) => {
 
 //Actualizar un usuario
 export const updateUser = async (user) => {
-    return await api.put(`${endpoint}/${user._id}`, user);
+    return await api.put(`${endpoint}`, user);
 }
 
 //Eliminar un usuario

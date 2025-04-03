@@ -53,8 +53,8 @@ const SelectedNotificationPage = () => {
                 <div className="p-10 text-lg">
                     <div className="flex flex-row justify-between flex-wrap">
                         <div className="flex flex-col mr-8">
-                            <p><strong>Dispositivo:</strong> {notification.device.name}</p>
-                            <p><strong>Nombre:</strong> {notification.name}</p>
+                            <p><strong>Dispositivo:</strong> {notification?.device.name}</p>
+                            <p><strong>Nombre:</strong> {notification?.name}</p>
                         </div>
                         <div className="flex flex-col">
                             <p><strong>Aula: </strong> {notification.space}</p>
@@ -74,9 +74,9 @@ const SelectedNotificationPage = () => {
                         </div>
                         <div className="">
                             <img 
-                                src={notification.image} 
+                                src="https://cdn.milenio.com/uploads/media/2020/01/28/arribar-encontraron-danos-considerables-salon.jpeg"
                                 alt="Ha ocurrido un problema al mostrar la imagen"
-                                className="w-full h-auto object-contain"
+                                className="w-full h-auto max-h-150 object-contain"
                             />
                         </div>
                     </div>
