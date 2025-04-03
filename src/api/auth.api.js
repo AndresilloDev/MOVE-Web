@@ -31,3 +31,9 @@ export const changePassword = async (password, token, user) => {
         user: user
     })
 }
+
+export const confirmEmail = async (user) => {
+    return await api.post(`${endpoint}/confirmEmail`, {
+        user: user,
+    })
+}

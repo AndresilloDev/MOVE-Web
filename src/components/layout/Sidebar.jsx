@@ -28,7 +28,7 @@ export default function Sidebar() {
     { icon: Bell, name: "Notificaciones", path: "/notifications" },
   ];
 
-  if(user.isSuperAdmin) {
+  if(user.isAdmin) {
     menuItems.push({ icon: Users, name: "Usuarios", path: "/users" });
   }
 

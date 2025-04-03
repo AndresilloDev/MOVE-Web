@@ -1,10 +1,11 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const ProtectedRoute = () => {
   const user = JSON.parse(sessionStorage.getItem("user"));
+  const location = useLocation();
 
-  if (!user) return <Navigate to="/" replace />;
-  if (!user.isSuperAdmin) return <Navigate to="/unauthorized" />;
+  if (!user) return <Navigate to="/" replace state={{ from: location }} />;
+  if (!user.isAdmin) return <Navigate to="/unauthorized" />;
 
   return <Outlet />;
 };

@@ -1,34 +1,41 @@
-import React, { useEffect, useState } from "react";
-import { FaHome, FaChevronRight, FaSearch, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
+import React, {useContext, useEffect, useState} from "react";
+import { FaSearch, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 import { getUsers, updateUser , deleteUser , register } from "../../api/users.api";
+import { useNotification } from "../../context/NotificationContext.jsx";
+import { AuthContext } from "../../context/AuthContext";
 
 const UsersPage = () => {
+    const { handleConfirmEmail } = useContext(AuthContext);
+    const { getError, getSuccess } = useNotification();
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [users, setUsers] = useState([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [selectedUser , setSelectedUser ] = useState(null);
-    const [newUser , setNewUser ] = useState({ name: "", surname: "", username: "", password: "", confirmPassword: "" });
+    const [selectedUser , setSelectedUser] = useState(null);
+    const [newUser , setNewUser] = useState({ name: "", lastName: "", user: "", password: "" });
 
     const usersPerPage = 5;
 
     useEffect(() => {
         const fetchUsers = async () => {
             const fetchedUsers = await getUsers();
-            setUsers(fetchedUsers);
+            setUsers(Array.isArray(fetchedUsers.data) ? fetchedUsers.data : []);
         };
         fetchUsers();
     }, []);
 
-    const filteredUsers = users.filter(user =>
-        user.user.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filterUsers = (users, searchQuery) => {
+        return users.filter(user =>
+            user.user.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    };
 
-    const indexOfLastUser  = currentPage * usersPerPage;
-    const indexOfFirstUser  = indexOfLastUser  - usersPerPage;
-    const currentUsers = filteredUsers.slice(indexOfFirstUser , indexOfLastUser );
+    const filteredUsers = filterUsers(users, searchQuery);
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
     const handleNextPage = () => {
@@ -60,7 +67,7 @@ const UsersPage = () => {
     };
 
     const openAddModal = () => {
-        setNewUser ({ name: "", surname: "", username: "", password: "", confirmPassword: "" });
+        setNewUser ({ name: "", lastName: "", user: "", password: "" });
         setIsAddModalOpen(true);
     };
 
@@ -68,25 +75,47 @@ const UsersPage = () => {
         setIsAddModalOpen(false);
     };
 
-    const handleUpdateUser  = async (userData) => {
-        await updateUser (selectedUser .id, userData);
-        const updatedUsers = await getUsers();
-        setUsers(updatedUsers);
-        closeEditModal();
+    const handleUpdateUser = async (userData) => {
+        try {
+            await updateUser (userData);
+            const updatedUsers = await getUsers();
+            setUsers(Array.isArray(updatedUsers.data) ? updatedUsers.data : []);
+            closeEditModal();
+            getSuccess("Usuario actualizado correctamente");
+
+        } catch {
+            getError("Error al actualizar el usuario");
+
+        }
     };
 
     const handleDeleteUser  = async () => {
-        await deleteUser (selectedUser .id);
-        const updatedUsers = await getUsers();
-        setUsers(updatedUsers);
-        closeDeleteModal();
+        try {
+            await deleteUser(selectedUser._id);
+            const updatedUsers = await getUsers();
+            setUsers(Array.isArray(updatedUsers.data) ? updatedUsers.data : []);
+            closeDeleteModal();
+            getSuccess("Usuario eliminado correctamente");
+
+        } catch {
+            getError("Error al eliminar el usuario");
+
+        }
     };
 
-    const handleAddUser  = async (userData) => {
-        await register(userData);
-        const updatedUsers = await getUsers();
-        setUsers(updatedUsers);
-        closeAddModal();
+    const handleAddUser = async (userData) => {
+        try {
+            await register(userData);
+            await handleConfirmEmail(userData.user)
+            const updatedUsers = await getUsers();
+            setUsers(Array.isArray(updatedUsers.data) ? updatedUsers.data : []);
+            closeAddModal();
+            getSuccess("Usuario creado correctamente");
+
+        } catch {
+            getError("Error al crear el usuario");
+
+        }
     };
 
     return (
@@ -170,21 +199,14 @@ const UsersPage = () => {
                             type="text"
                             className="w-full border border-black rounded-lg p-2 mb-3"
                             placeholder="Apellidos"
-                            defaultValue={selectedUser ?.surname}
-                            onChange={(e) => setSelectedUser ({ ...selectedUser , surname: e.target.value })}
-                        />
-                        <input
-                            type="email"
-                            className="w-full border border-black rounded-lg p-2 mb-3"
-                            placeholder="Correo"
-                            defaultValue={selectedUser ?.username}
-                            onChange={(e) => setSelectedUser ({ ...selectedUser , username: e.target.value })}
+                            defaultValue={selectedUser ?.lastName}
+                            onChange={(e) => setSelectedUser ({ ...selectedUser , lastName: e.target.value })}
                         />
                         <div className="flex justify-center space-x-4 mt-4">
                             <button onClick={closeEditModal} className="border border-black px-4 py-2 rounded-lg">
                                 Cancelar
                             </button>
-                            <button onClick={() => handleUpdateUser (selectedUser )} className="border border-black bg-action-primary px-4 py-2 rounded-lg">
+                            <button onClick={() => handleUpdateUser (selectedUser)} className="border border-black bg-action-primary px-4 py-2 rounded-lg">
                                 Actualizar
                             </button>
                         </div>
@@ -204,7 +226,7 @@ const UsersPage = () => {
                             <button onClick={closeDeleteModal} className="border border-black px-4 py-2 rounded-lg">
                                 Cancelar
                             </button>
-                            <button onClick={handleDeleteUser } className="border border-black bg-action-primary text-black px-4 py-2 rounded-lg">
+                            <button onClick={handleDeleteUser} className="border border-black bg-action-primary text-black px-4 py-2 rounded-lg">
                                 Eliminar
                             </button>
                         </div>
@@ -223,42 +245,35 @@ const UsersPage = () => {
                             type="text"
                             className="w-full border border-black rounded-lg p-2 mb-3"
                             placeholder="Nombre"
-                            value={newUser .name}
+                            value={newUser.name}
                             onChange={(e) => setNewUser ({ ...newUser , name: e.target.value })}
                         />
                         <input
                             type="text"
                             className="w-full border border-black rounded-lg p-2 mb-3"
                             placeholder="Apellidos"
-                            value={newUser .surname}
-                            onChange={(e) => setNewUser ({ ...newUser , surname: e.target.value })}
+                            value={newUser.lastName}
+                            onChange={(e) => setNewUser ({ ...newUser , lastName: e.target.value })}
                         />
                         <input
                             type="email"
                             className="w-full border border-black rounded-lg p-2 mb-3"
                             placeholder="Correo"
-                            value={newUser .username}
-                            onChange={(e) => setNewUser ({ ...newUser , username: e.target.value })}
+                            value={newUser.user}
+                            onChange={(e) => setNewUser ({ ...newUser , user: e.target.value })}
                         />
                         <input
                             type="password"
                             className="w-full border border-black rounded-lg p-2 mb-3"
                             placeholder="Contraseña"
-                            value={newUser .password}
+                            value={newUser.password}
                             onChange={(e) => setNewUser ({ ...newUser , password: e.target.value })}
-                        />
-                        <input
-                            type="password"
-                            className="w-full border border-black rounded-lg p-2 mb-3"
-                            placeholder="Confirmar Contraseña"
-                            value={newUser .confirmPassword}
-                            onChange={(e) => setNewUser ({ ...newUser , confirmPassword: e.target.value })}
                         />
                         <div className="flex justify-center space-x-4 mt-4">
                             <button onClick={closeAddModal} className="border border-black px-4 py-2 rounded-lg">
                                 Cancelar
                             </button>
-                            <button onClick={() => handleAddUser (newUser )} className="border border-black bg-action-primary px-4 py-2 rounded-lg">
+                            <button onClick={() => handleAddUser (newUser)} className="border border-black bg-action-primary px-4 py-2 rounded-lg">
                                 Agregar
                             </button>
                         </div>

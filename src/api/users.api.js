@@ -9,20 +9,20 @@ export const getUsers = async () => {
 
 //Obtener un usuario
 export const getUser = async (userId) => {
-    return await api.get(`/${endpoint}/${userId}`);
+    return await api.get(`${endpoint}/${userId}`);
 }
 
 //Actualizar un usuario
 export const updateUser = async (user) => {
-    return await api.put(`/${endpoint}/${user._id}`, user);
+    return await api.put(`${endpoint}/${user._id}`, user);
 }
 
 //Eliminar un usuario
 export const deleteUser = async (userId) => {
-    return await api.delete(`/${endpoint}/${userId}`);
+    return await api.delete(`${endpoint}/${userId}`);
 }
 
 //Registrar un usuario
 export const register = async (user) => {
-    return await api.post(`/${endpoint}/register`, user);
+    return await api.post(`${endpoint}/`, user);
 }
