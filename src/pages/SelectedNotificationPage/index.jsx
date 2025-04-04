@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getNotification } from "../../api/notifications.api";
+import { useNavigate, useParams } from "react-router-dom";
+import { fileNotification, getNotification } from "../../api/notifications.api";
 import { useNotification } from "../../context/NotificationContext";
 import { Loader } from "lucide-react";
 
@@ -9,6 +9,8 @@ const SelectedNotificationPage = () => {
 
     const [notification, setNotification] = useState(null);
     const { getError, getSuccess } = useNotification();
+
+    const navigate = useNavigate();
 
     const getFormmatedValue = () => {
         if (notification.value) {
@@ -29,15 +31,29 @@ const SelectedNotificationPage = () => {
     }
 
     const getDate = () => {
-        console.log(notification.date);
         return new Date(notification.date).toISOString().replace("T", " ").substring(0, 19)
+    }
+
+    const handleFileNotification = async () => {
+        try {
+            const response = await fileNotification(id);
+            if (response.status === 200) {
+                getSuccess("Notificación resuelta correctamente");
+                setNotification({ ...notification, status: false });
+                navigate("/notifications");
+            } else {
+                getError("Error al resolver la notificación");
+            }
+        } catch (error) {
+            console.error("Error resolving notification:", error);
+            getError("Error al resolver la notificación");
+        }
     }
 
     useEffect(() => {
         const fetchNotification = async () => {
             try {
                 const response = await getNotification(id);
-                console.log("Response from API:", response.data);
                 setNotification(response.data);
             } catch (error) {
                 console.error("Error fetching notification:", error);
@@ -66,6 +82,18 @@ const SelectedNotificationPage = () => {
                             <strong>Sensor: </strong> {notification.sensor}
                         </p>
                     </div>
+                    {notification.status && (
+                        <div className="flex flex-col items-end justify-center mt-4 mb-4">
+                            <button 
+                                className="bg-action-primary text-black rounded-xl 
+                                py-2 px-4 border border-[#0000002E]
+                                hover:bg-action-hover cursor-pointer transition duration-200"
+                                onClick={handleFileNotification}
+                            >
+                                Notificación resuelta
+                            </button>
+                        </div>
+                    )}
 
                     <div className="bg-secondary-background rounded-lg p-4 mt-4 mb-4">
                         <div className="flex flex-row flex-wrap items-center justify-between mb-4">

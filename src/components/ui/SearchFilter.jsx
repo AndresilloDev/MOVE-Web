@@ -9,7 +9,12 @@ const SearchFilter = ({ search, setSearch, setOpenAddModal }) => {
 
     return (
         <div className="flex justify-start p-4 w-full mt-2">
-            <div className="flex items-center bg-white border border-gray-300 rounded-full overflow-hidden shadow-md w-full lg:w-3/4">
+            <div 
+                className={`flex items-center bg-white border 
+                            border-gray-300 rounded-full 
+                            overflow-hidden shadow-md w-full 
+                            ${isNotificationsPage ? "lg:w-full" : "lg:w-3/4"}`}
+            >
                 <input
                     type="text"
                     placeholder="Buscar..."

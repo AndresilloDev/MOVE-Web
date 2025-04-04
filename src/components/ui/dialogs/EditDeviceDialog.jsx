@@ -103,7 +103,7 @@ const EditDeviceDialog = ({ onClose, onSave, device }) => {
                             <option value="">Seleccionar edificio</option>
                             {buildings
                                 .map((building) => (
-                                    <option key={building.id} value={building.name}>
+                                    <option key={building._id} value={building.name}>
                                         {building.name}
                                     </option>
                                 ))}

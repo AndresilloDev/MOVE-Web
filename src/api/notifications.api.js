@@ -29,6 +29,6 @@ export const createNotification = async (notification) => {
 
 // Archivar una notificación (cambiar su estado a false)
 export const fileNotification = async (notificationId) => {
-    return await api.put(`${endpoint}/file/${notificationId}`);
+    return await api.put(`${endpoint}/filed/${notificationId}`);
 };
 
