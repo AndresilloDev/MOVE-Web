@@ -14,7 +14,7 @@ export default function HomePage() {
       {/* Sección de Imagen */}
       <div className="w-full lg:w-7/12 flex items-center justify-center p-6">
         <img
-          src="../../src/assets/dash.png"
+          src="../../src/assets/dashboard.png"
           alt="Monitor"
           className="max-w-full h-auto shadow-2xl rounded-2xl"
         />

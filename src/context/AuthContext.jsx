@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { login, logout, checkAuth, recoverPassword, changePassword, confirmEmail } from "../api/auth.api.js";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { login, logout, checkAuth, recoverPassword, changePassword} from "../api/auth.api.js";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import { useNotification } from "./NotificationContext.jsx";
 
 export const AuthContext = createContext();
@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }) => {
 
     const updateProfile = async (user) => {
         try {
+            
             setUser(user);
             sessionStorage.setItem("user", JSON.stringify(user));
             getSuccess("Perfil actualizado correctamente");
@@ -95,21 +96,8 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    const handleConfirmEmail = async (user) => {
-        try {
-            const response = await confirmEmail(user);
-            if (response.status === 200) {
-                getSuccess("Correo enviado");
-
-            }
-        } catch {
-            getError("Usuario no encontrado");
-
-        }
-    }
-
     return (
-        <AuthContext.Provider value={{ user, handleLogout, handleLogin, updateProfile, handleRecoverPassword, handleChangePassword, handleConfirmEmail }}>
+        <AuthContext.Provider value={{ user, handleLogout, handleLogin, updateProfile, handleRecoverPassword, handleChangePassword }}>
             {children}
         </AuthContext.Provider>
     );
