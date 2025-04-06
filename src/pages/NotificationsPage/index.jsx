@@ -22,7 +22,7 @@ export default function NotificationsPage() {
     const fetchNotifications = async () => {
       setLoading(true);
       try {
-        const response = showFiled ? await getFiledNotifications() : await getUnfiledNotifications();
+        const response = showFiled ? await getFiledNotifications() : await getUnfiledNotifications({deviceId, sensorType});
         
         const formattedData = await Promise.all(
           response.data.map(async (notification) => {
