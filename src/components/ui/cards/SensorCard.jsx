@@ -1,8 +1,14 @@
 import React from 'react';
 import { GaugeComponent } from 'react-gauge-component';
 import { Bell, Settings } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SensorCard = ({ sensor, thresholds, className, isSelected, onClick }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const deviceId = location.pathname.split('/')[2];
+
   // Obtener el último valor del sensor
   const latestValue = sensor?.data?.[sensor?.data?.length - 1]?.value ?? 0;
 
@@ -130,9 +136,10 @@ const SensorCard = ({ sensor, thresholds, className, isSelected, onClick }) => {
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold mb-2 text-left text-gray-800">{translatedName}</h2>
         <div className="flex space-x-2">
-        <button 
+          <button 
             className="p-2 rounded-full hover:bg-gray-100 transition"
             title="Notificaciones"
+            onClick={() => navigate('/notifications?deviceId=' + deviceId+"sensorType="+sensor.sensorName)}
           >
             <Bell className="w-5 h-5 text-gray-600" />
           </button>

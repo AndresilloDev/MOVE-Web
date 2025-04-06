@@ -4,10 +4,14 @@ import { getDevice } from "../../api/devices.api";
 import { useNotification } from "../../context/NotificationContext";
 import SearchFilter from "../../components/ui/SearchFilter";
 import NotificationsTable from "../../components/ui/tables/NotificationsTable";
-import { Archive, Inbox } from "lucide-react";
 import { Loader } from "../../components/ui/Loader";
+import { useSearchParams } from "react-router-dom";
 
 export default function NotificationsPage() {
+  const [searchParams] = useSearchParams();
+  const deviceId = searchParams.get("deviceId") || "";
+  const sensorType = searchParams.get("sensorType") || "";
+
   const { getError } = useNotification();
   const [search, setSearch] = useState("");
   const [notifications, setNotifications] = useState([]);
@@ -53,6 +57,7 @@ export default function NotificationsPage() {
         );
 
         setNotifications(formattedData);
+        console.log("Notificaciones:", formattedData);
       } catch (error) {
         console.error("Error al obtener notificaciones:", error);
         getError("Error al obtener las notificaciones");

@@ -8,7 +8,7 @@ export const getUnfiledNotifications = async () => {
 };
 
 // Obtener todas las notificaciones archivadas
-export const getFiledNotifications = async () => {
+export const getFiledNotifications = async ({deviceId, sensorType}) => {
     return await api.get(`${endpoint}/filed`);
 };
 
