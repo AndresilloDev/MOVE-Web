@@ -3,12 +3,14 @@ import api from "./base.api";
 const endpoint = "/notifications";
 
 // Obtener todas las notificaciones NO archivadas
-export const getUnfiledNotifications = async () => {
-    return await api.get(`${endpoint}/unfiled`);
+export const getUnfiledNotifications = async ({deviceId, sensorType}) => {
+    return await api.get(`${endpoint}/unfiled`, {
+        params: { deviceId, sensorType }
+    });
 };
 
 // Obtener todas las notificaciones archivadas
-export const getFiledNotifications = async ({deviceId, sensorType}) => {
+export const getFiledNotifications = async () => {
     return await api.get(`${endpoint}/filed`);
 };
 
