@@ -2,10 +2,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation } from "react-router-dom";
 
-const SearchFilter = ({ search, setSearch, setOpenAddModal }) => {
+const SearchFilter = ({ search, setSearch, setOpenAddModal, showAddButton = false }) => {
     const location = useLocation();
     const isDevicesPage = location.pathname.includes("/devices");
     const isNotificationsPage = location.pathname.startsWith("/notifications");
+    const isUsersPage = location.pathname.startsWith("/users");
 
     return (
         <div className="flex justify-start p-4 w-full mt-2">
@@ -13,7 +14,7 @@ const SearchFilter = ({ search, setSearch, setOpenAddModal }) => {
                 className={`flex items-center bg-white border 
                             border-gray-300 rounded-full 
                             overflow-hidden shadow-md w-full 
-                            ${isNotificationsPage ? "lg:w-full" : "lg:w-3/4"}`}
+                            lg:w-full`}
             >
                 <input
                     type="text"
@@ -26,7 +27,7 @@ const SearchFilter = ({ search, setSearch, setOpenAddModal }) => {
                     <SearchIcon className="text-black" />
                 </button>
             </div>
-            {(!isDevicesPage && !isNotificationsPage) && (
+            {(showAddButton || (!isDevicesPage && !isNotificationsPage)) && (
                 <button
                     className="bg-action-primary text-black rounded-full p-2 ml-4 flex items-center"
                     onClick={() => setOpenAddModal(true)}

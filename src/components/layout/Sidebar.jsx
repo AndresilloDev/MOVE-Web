@@ -29,7 +29,7 @@ export default function Sidebar() {
   ];
 
   if(user.isAdmin) {
-    menuItems.push({ icon: Users, name: "Usuarios", path: "/users" });
+    menuItems.splice(2, 0, { icon: Users, name: "Usuarios", path: "/users" });
   }
 
   return (
@@ -60,6 +60,7 @@ export default function Sidebar() {
             }`}
           >
             <h3 className="text-sm font-semibold truncate">{user.name}</h3>
+            {user.isAdmin && <p className="text-xs font-['Helvetica-Bold'] truncate">SuperAdmin</p>}
             <p className="text-xs text-gray-400 truncate"></p>
           </div>
         </div>
