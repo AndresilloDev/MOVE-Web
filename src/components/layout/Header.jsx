@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import ButtonBox from '../ui/ButtonBox';
 import { User } from 'lucide-react';
 import { ProfileDialog } from '../ui/dialogs/ProfileDialog';
+import logo from '../../assets/logo.png';
+
 
 const Header = ({ isLoggedIn }) => {
     const navigate = useNavigate();
@@ -13,7 +15,7 @@ const Header = ({ isLoggedIn }) => {
         <>
             <div className="bg-header shadow-md w-full h-12 lg:h-16 flex items-center justify-between p-4 sm:p-6 lg:px-22">
                 <div className="logo cursor-pointer" onClick={() => navigate("/")}>
-                    <img src="../../src/assets/logo.png" alt="MOVE" className="h-8 sm:h-10 w-auto"/>
+                    <img src={logo} alt="MOVE" className="h-8 sm:h-10 w-auto"/>
                 </div>
 
                 <div className="auth">

@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import ButtonBox from "../ButtonBox";
 import InputBox from "../InputBox";
-import { Add } from "@mui/icons-material";
 
 export const AddBuildingDialog = ({ onClose, onSave }) => {
     const [buildingName, setBuildingName] = useState("");

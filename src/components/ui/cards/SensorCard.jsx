@@ -144,7 +144,7 @@ const SensorCard = ({ sensor, thresholds, className, isSelected, onClick, onConf
             <Bell className="w-5 h-5 text-gray-600" />
           </button>
           <button 
-            className="p-2 rounded-full hover:bg-gray-100 z-1000 transition"
+            className="p-2 rounded-full hover:bg-gray-100 transition"
             title="Configuración"
             onClick={() => {
               onConfig({open: true, sensor: sensor});
