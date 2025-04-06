@@ -119,7 +119,7 @@ export default function Sidebar() {
       {/* Cerrar sesión (separado) */}
       <button
         onClick={() => handleLogout()}
-        className={`flex items-center px-4 py-3 hover:bg-red-700 rounded-lg  ${
+        className={`flex items-center px-4 py-3 hover:bg-gray-200 rounded-lg  ${
           sidebarOpen ? "" : "justify-center"
         }`}
       >

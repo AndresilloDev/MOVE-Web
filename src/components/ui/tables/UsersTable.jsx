@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FaEdit, FaTrash, FaTimes } from "react-icons/fa";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2, UserRoundPen } from "lucide-react";
 import { ElementsNotAvailable } from "../ElementsNotAvailable";
 
 export default function UsersTable({ data = [], search, onEdit, onDelete }) {
@@ -37,8 +36,8 @@ export default function UsersTable({ data = [], search, onEdit, onDelete }) {
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellido</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                    <th className="px-6 pl-32 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellido</th>
+                                    <th className="px-6 pl-42 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
@@ -46,21 +45,21 @@ export default function UsersTable({ data = [], search, onEdit, onDelete }) {
                                     <tr key={user._id || Math.random()} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.user}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.lastName}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                        <td className="px-6 pl-32 py-4 whitespace-nowrap text-sm text-gray-900">{user.lastName}</td>
+                                        <td className="px-6 pl-30 py-4 whitespace-nowrap text-sm">
                                             <div className="flex space-x-2">
                                                 <button
                                                     onClick={() => onEdit(user)}
-                                                    className="inline-flex items-center px-3 py-1.5 border border-lines text-xs font-medium rounded-md bg-white text-gray-500 hover:border-blue-500 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                                    className="inline-flex items-center px-3 py-1.5 border border-lines text-xs font-medium rounded-md bg-white text-gray-500 hover:border-black hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                                                 >
-                                                    <FaEdit className="mr-1.5 h-3.5 w-3.5" />
+                                                    <UserRoundPen className="mr-1.5 h-3.5 w-3.5" />
                                                     Editar
                                                 </button>
                                                 <button
                                                     onClick={() => onDelete(user)}
                                                     className="inline-flex items-center px-3 py-1.5 border border-lines text-xs font-medium rounded-md bg-white text-gray-500 hover:border-red-500 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                                                 >
-                                                    <FaTrash className="mr-1.5 h-3.5 w-3.5" />
+                                                    <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                                                     Eliminar
                                                 </button>
                                             </div>

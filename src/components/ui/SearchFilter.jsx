@@ -29,7 +29,7 @@ const SearchFilter = ({ search, setSearch, setOpenAddModal, showAddButton = fals
             </div>
             {(showAddButton || (!isDevicesPage && !isNotificationsPage)) && (
                 <button
-                    className="bg-action-primary text-black rounded-full p-2 ml-4 flex items-center"
+                    className="bg-action-primary text-black shadow-md border border-lines rounded-full p-2 ml-4 flex items-center cursor-pointer hover:bg-action-hover duration-300"
                     onClick={() => setOpenAddModal(true)}
                 > 
                     <AddIcon className="text-black" />

@@ -11,6 +11,7 @@ import { useNotification } from '../../context/NotificationContext';
 import SensorCard from '../../components/ui/cards/SensorCard';
 import SensorChart from '../../components/ui/SensorChart';
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { Loader } from "../../components/ui/Loader";
 import ConfigSensorDialog from '../../components/ui/dialogs/ConfigSensorDialog';
 
 // Cositas
@@ -29,24 +30,24 @@ const SENSOR_UNITS = {
   light: 'lux',
   sound: 'dB'
 };
-const UPDATE_INTERVAL = 5000; // 5 segundos (para que se actualice rapido y mostrar algo bien en la entrega, aunque probablemente deba ser mas lenta tanto aqui, como en el envio desde mqtt para no sobrecargar de datos)
+const UPDATE_INTERVAL = 5000; // 5 segundos
 
 const SelectedDevicePage = () => {
   const { id: deviceId } = useParams();
   const navigate = useNavigate();
+  const { getError, getSuccess } = useNotification();
   
   // Estados principales
   const [sensors, setSensors] = useState([]);
   const [deviceInfo, setDeviceInfo] = useState({});
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [historicalData, setHistoricalData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
     startDate: '',
     endDate: ''
   });
-  const [isDataLoading, setIsDataLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-
   const [openConfigDialog, setOpenConfigDialog] = useState({
     open: false,
     sensor: null
@@ -57,9 +58,7 @@ const SelectedDevicePage = () => {
   const leftArrowRef = useRef(null);
   const rightArrowRef = useRef(null);
 
-  const { getError, getSuccess } = useNotification();
-
-  // Ordenamos los sensores según orden (para evitar q el map ponga lo q se le inchen lo huevo)
+  // Ordenamos los sensores según orden
   const sortedSensors = useMemo(() => {
     if (!sensors.length) return [];
     
@@ -77,26 +76,25 @@ const SelectedDevicePage = () => {
     yesterday.setDate(now.getDate() - 1);
     
     setDateRange({
-      endDate: now.toISOString().slice(0, 16),
-      startDate: yesterday.toISOString().slice(0, 16)
+      endDate: toLocalMexicoDateTimeString(now),
+      startDate: toLocalMexicoDateTimeString(yesterday)
     });
   }, []);
 
-  // Función para reiniciar el rango de fechas a las últimas 24 horas cuando el user meta un rango sin fechas
+  // Función para reiniciar el rango de fechas a las últimas 24 horas
   const handleDateRangeReset = useCallback(() => {
     const now = new Date();
     const yesterday = new Date(now);
     yesterday.setDate(now.getDate() - 1);
     
     setDateRange({
-      endDate: now.toISOString().slice(0, 16),
-      startDate: yesterday.toISOString().slice(0, 16)
+      endDate: toLocalMexicoDateTimeString(now),
+      startDate: toLocalMexicoDateTimeString(yesterday)
     });
   }, []);
 
   // Obtener los datos del dispositivo y configurar actualizaciones en tiempo real
   useEffect(() => {
-    // Función para cargar datos del dispositivo y sus sensores
     const fetchDeviceData = async () => {
       try {
         // Obtener info del dispositivo
@@ -109,9 +107,7 @@ const SelectedDevicePage = () => {
         setSensors(prevSensors => {
           const newSensors = sensorsResponse.data;
           
-          // Solo actualiza si hay cambios
           if (JSON.stringify(prevSensors) !== JSON.stringify(newSensors)) {
-            // Si no hay sensor seleccionado y tenemos sensores, selecciona temperatura por defecto
             if (!selectedSensor && newSensors.length > 0) {
               const tempSensor = newSensors.find(s => 
                 s.sensorName.toLowerCase() === 'temperature'
@@ -138,7 +134,6 @@ const SelectedDevicePage = () => {
       try {
         const sensorsResponse = await getDeviceSensors(deviceId);
         
-        // Solo ctualizar los sensores si hay cambios
         setSensors(prevSensors => {
           const newSensors = sensorsResponse.data;
           if (JSON.stringify(prevSensors) !== JSON.stringify(newSensors)) {
@@ -153,10 +148,9 @@ const SelectedDevicePage = () => {
       }
     }, UPDATE_INTERVAL);
 
-    // Lisener de actualizaciones en tiempo real
+    // Listener de actualizaciones en tiempo real
     const unsubscribe = listenToSensorUpdates((data) => {
       if (data.deviceId === deviceId) {
-        // Actualiza solo el sensor específico que cambió
         setSensors(prevSensors => {
           if (!prevSensors) return prevSensors;
           
@@ -178,7 +172,6 @@ const SelectedDevicePage = () => {
       }
     });
 
-    // Limpiamos los intervalos y suscripciones al desmontar
     return () => {
       clearInterval(updateInterval);
       unsubscribe();
@@ -190,34 +183,23 @@ const SelectedDevicePage = () => {
     const fetchHistoricalData = async () => {
       if (!selectedSensor || !dateRange.startDate || !dateRange.endDate) return;
       
-      setIsDataLoading(true);
+      setLoading(true);
       
       try {
-        const startD = new Date(dateRange.startDate);
-        const endD = new Date(dateRange.endDate);        
-        startD.setDate(startD.getDate() - 1);
-        endD.setDate(endD.getDate() - 1); 
-
-        const start = startD.toISOString();
-        const end = endD.toISOString();
-
-        console.log("Fechas seleccionadas");
-        console.log("Inicio:", start);
-        console.log("Fin:", end);
+        // Convertimos las fechas locales a ISO
+        const start = new Date(dateRange.startDate).toISOString();
+        const end = new Date(dateRange.endDate).toISOString();
         
         const response = await getAllSensorDataInRange(deviceId, {
           start,
           end,
           sensorName: selectedSensor?.sensorName
         });
-
-        console.log("Respuesta de datos históricos:", response.data);
     
         if (response.data && response.data.length > 0) {
           const sensorData = response.data[0];
           
           if (sensorData && sensorData.data && sensorData.data.length > 0) {
-            // Formate los datos para la gráfica
             const formattedData = sensorData.data.map(item => ({
               time: new Date(item.time).toLocaleString('es-ES', {
                 day: '2-digit',
@@ -231,7 +213,6 @@ const SelectedDevicePage = () => {
               lower: selectedSensor.thresholds?.lower
             }));
             
-            // Ordena cronológicamente la data
             formattedData.sort((a, b) => a.timestamp - b.timestamp);
             
             setHistoricalData(formattedData);
@@ -245,7 +226,7 @@ const SelectedDevicePage = () => {
         console.error("Error al cargar datos históricos:", err);
         getError('No se pudieron cargar los datos históricos');
       } finally {
-        setIsDataLoading(false);
+        setLoading(false);
       }
     };
     
@@ -260,17 +241,14 @@ const SelectedDevicePage = () => {
     
     if (!container || !leftArrow || !rightArrow) return;
     
-    // Verificamos si necesitamos mostrar los controles de scroll
     const checkOverflow = () => {
       const isOverflowing = container.scrollWidth > container.clientWidth;
       leftArrow.style.display = container.scrollLeft > 0 ? 'flex' : 'none';
       rightArrow.style.display = isOverflowing && container.scrollLeft < container.scrollWidth - container.clientWidth ? 'flex' : 'none';
     };
     
-    // Verificación inicial
     checkOverflow();
     
-    // Configuramos listeners para eventos de scroll y resize
     container.addEventListener('scroll', checkOverflow);
     window.addEventListener('resize', checkOverflow);
     
@@ -292,12 +270,11 @@ const SelectedDevicePage = () => {
     }));
   }, []);
 
-  // Control del slider de tarjetas
   const scrollSlider = useCallback((direction) => {
     const container = scrollContainerRef.current;
     if (!container) return;
     
-    const cardWidth = 280; // ancho de tarjeta + gap
+    const cardWidth = 280;
     const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
     
     container.scrollBy({
@@ -306,8 +283,16 @@ const SelectedDevicePage = () => {
     });
   }, []);
 
+  // Función para convertir Date a string en formato datetime-local (horario México)
+  const toLocalMexicoDateTimeString = (date) => {
+    const offset = date.getTimezoneOffset() * 60000;
+    const localDate = new Date(date.getTime() - offset);
+    return localDate.toISOString().slice(0, 16);
+  };
+
   const formatDateTime = useCallback((date) => {
-    return date.toLocaleString('es-ES', {
+    return date.toLocaleString('es-MX', {
+      timeZone: 'America/Mexico_City',
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -315,19 +300,6 @@ const SelectedDevicePage = () => {
       minute: '2-digit'
     });
   }, []);
-
-  const formatedDateFormejico = (dateStr) => {
-    const date = new Date(dateStr);
-
-    date.setHours(date.getHours() - 6);const year = date.getFullYear();
-
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hour = String(date.getHours()).padStart(2, '0');
-    const minute = String(date.getMinutes()).padStart(2, '0');
-  
-    return `${year}-${month}-${day}T${hour}:${minute}`;
-};
 
   const getSensorUnit = useCallback(() => {
     if (!selectedSensor) return '';
@@ -360,7 +332,6 @@ const SelectedDevicePage = () => {
     return nameMap[sensorName.toLowerCase()] || sensorName;
   }, []);
 
-
   const handleUpdateThresholds = async (data) => {
     try {
       console.log("Datos para actualizar umbrales:", data.thresholds);
@@ -375,29 +346,31 @@ const SelectedDevicePage = () => {
         console.error(error);
         getError("Error al actualizar umbrales");
     }
-};
+  };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* Titulo con nombre del dispositivo y última actualización */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2 md:mb-0">
-          {deviceInfo.name || 'Panel de Control'}
-        </h1>
+    <>
+      {loading && (
+          <Loader />
+      )}
   
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <span>Última actualización: {formatDateTime(lastUpdated)}</span>
-          <span className="p-1 bg-blue-50 rounded-full" aria-label="Refresh data">
-            <RefreshCw size={16} className="text-blue-600" />
-          </span>
+      <div className={`container mx-auto px-4 py-6 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
+        {/* Encabezado */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2 md:mb-0">
+            {deviceInfo.name || 'Panel de Control'}
+          </h1>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>Última actualización: {formatDateTime(lastUpdated)}</span>
+            <span className="p-1 bg-blue-50 rounded-full">
+              <RefreshCw size={16} className="text-blue-600" />
+            </span>
+          </div>
         </div>
-      </div>
   
-      <div className="overflow-y-auto max-h-screen" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        {/* Slider de tarjetas de sensores */}
+        {/* Slider de sensores */}
         <div className="relative mb-8">
           <div className="relative">
-            {/* Botón de navegación izquierda */}
             <button
               ref={leftArrowRef}
               onClick={() => scrollSlider('left')}
@@ -407,7 +380,6 @@ const SelectedDevicePage = () => {
               <ChevronLeft size={20} />
             </button>
   
-            {/* Contenedor del slider */}
             <div 
               ref={scrollContainerRef}
               className="flex overflow-x-auto py-4 scrollbar-hide"
@@ -415,10 +387,10 @@ const SelectedDevicePage = () => {
             >
               <div className="flex gap-6 min-w-max px-8 items-center">
                 {sortedSensors.map(sensor => (
-                  <div key={sensor.id || `sensor-${Math.random()}`} className="flex-shrink-0">
+                  <div key={sensor.id} className="flex-shrink-0">
                     <SensorCard 
                       sensor={sensor} 
-                      isSelected={selectedSensor && selectedSensor._id === sensor._id}
+                      isSelected={selectedSensor?._id === sensor._id}
                       onClick={() => handleSensorSelect(sensor)}
                       className="w-64 h-full"
                       onConfig={setOpenConfigDialog}
@@ -428,7 +400,6 @@ const SelectedDevicePage = () => {
               </div>
             </div>
   
-            {/* Botón de navegación derecha */}
             <button
               ref={rightArrowRef}
               onClick={() => scrollSlider('right')}
@@ -437,45 +408,43 @@ const SelectedDevicePage = () => {
               <ChevronRight size={20} />
             </button>
   
-            {/* Gradientes de sombra para cuando las cards ¨salen¨ de la pantalla*/}
             <div className="absolute left-0 top-0 bg-gradient-to-r from-white to-transparent w-8 h-full pointer-events-none"></div>
             <div className="absolute right-0 top-0 bg-gradient-to-l from-white to-transparent w-8 h-full pointer-events-none"></div>
           </div>
         </div>
   
-        {/* Sección de datos históricos */}
+        {/* Sección de gráficos */}
         <div className="bg-white rounded-lg shadow-md p-6 mx-6 border border-gray-200 mb-50">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
             <div>
               <h2 className="text-xl font-semibold text-gray-800">
                 {selectedSensor 
                   ? `Histórico de ${getSensorDisplayName(selectedSensor.sensorName)}` 
-                  : 'Selecciona un sensor para ver sus datos'}
+                  : 'Selecciona un sensor'}
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Ingresa el rango de fechas para visualizar los datos históricos
+                Rango de fechas para visualizar datos
               </p>
             </div>
   
-            {/* Selectores de rango de fechas */}
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex flex-col">
-                <label htmlFor="start-date" className="text-sm text-gray-600 mb-1">Fecha inicio:</label>
+                <label htmlFor="start-date" className="text-sm text-gray-600 mb-1">Inicio:</label>
                 <input
                   id="start-date"
                   type="datetime-local"
-                  value={dateRange.startDate ? formatedDateFormejico(dateRange.startDate) : ''}
+                  value={dateRange.startDate}
                   onChange={(e) => handleDateChange('startDate', e.target.value)}
                   className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
   
               <div className="flex flex-col">
-                <label htmlFor="end-date" className="text-sm text-gray-600 mb-1">Fecha fin:</label>
+                <label htmlFor="end-date" className="text-sm text-gray-600 mb-1">Fin:</label>
                 <input
                   id="end-date"
                   type="datetime-local"
-                  value={dateRange.endDate ? formatedDateFormejico(dateRange.endDate) : ''}
+                  value={dateRange.endDate}
                   onChange={(e) => handleDateChange('endDate', e.target.value)}
                   className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -483,89 +452,85 @@ const SelectedDevicePage = () => {
             </div>
           </div>
   
-          {/* Gráfico de datos históricos */}
           {selectedSensor ? (
-            <SensorChart
-              historicalData={historicalData}
-              selectedSensor={selectedSensor}
-              isDataLoading={isDataLoading}
-              sensorColors={SENSOR_COLORS}
-              getSensorUnit={getSensorUnit}
-              handleDateRangeReset={handleDateRangeReset}
-            />
+            <>
+              <SensorChart
+                historicalData={historicalData}
+                selectedSensor={selectedSensor}
+                loading={loading}
+                sensorColors={SENSOR_COLORS}
+                getSensorUnit={getSensorUnit}
+                handleDateRangeReset={handleDateRangeReset}
+              />
+  
+              {historicalData.length > 0 && (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-6">
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+                      <p className="text-gray-500 text-sm mb-1">Valor Actual</p>
+                      <p className="text-2xl font-bold" style={{ color: SENSOR_COLORS[selectedSensor.sensorName.toLowerCase()] || "#2563EB" }}>
+                        {stats.current} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+                      <p className="text-gray-500 text-sm mb-1">Promedio</p>
+                      <p className="text-2xl font-bold text-gray-700">
+                        {stats.average} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+                      <p className="text-gray-500 text-sm mb-1">Mínimo</p>
+                      <p className="text-2xl font-bold text-blue-500">
+                        {stats.min} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+                      <p className="text-gray-500 text-sm mb-1">Máximo</p>
+                      <p className="text-2xl font-bold text-red-500">
+                        {stats.max} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
+                      </p>
+                    </div>
+                  </div>
+  
+                  {(selectedSensor.thresholds?.upper !== undefined || selectedSensor.thresholds?.lower !== undefined) && (
+                    <div className="mt-6 p-4 rounded-lg border bg-blue-50 border-blue-200">
+                      <h3 className="font-medium mb-2">Estado del sensor</h3>
+                      <div className="space-y-2">
+                        {selectedSensor.thresholds?.upper !== undefined && stats.current > selectedSensor.thresholds.upper && (
+                          <p className="text-red-600 text-sm flex items-center">
+                            <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
+                            El valor actual está por encima del umbral máximo ({selectedSensor.thresholds.upper} {getSensorUnit()})
+                          </p>
+                        )}
+                        {selectedSensor.thresholds?.lower !== undefined && stats.current < selectedSensor.thresholds.lower && (
+                          <p className="text-amber-600 text-sm flex items-center">
+                            <span className="inline-block w-2 h-2 rounded-full bg-amber-500 mr-2"></span>
+                            El valor actual está por debajo del umbral mínimo ({selectedSensor.thresholds.lower} {getSensorUnit()})
+                          </p>
+                        )}
+                        {((selectedSensor.thresholds?.upper !== undefined && 
+                          stats.current <= selectedSensor.thresholds.upper && 
+                          (selectedSensor.thresholds?.lower === undefined || stats.current >= selectedSensor.thresholds.lower)) || 
+                          (selectedSensor.thresholds?.upper === undefined && 
+                          selectedSensor.thresholds?.lower !== undefined && 
+                          stats.current >= selectedSensor.thresholds.lower)) && (
+                          <p className="text-green-600 text-sm flex items-center">
+                            <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                            El sensor está funcionando dentro de los límites normales
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
           ) : (
             <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-gray-500">Selecciona un sensor para ver sus datos históricos</p>
+              <p className="text-gray-500">Selecciona un sensor para ver datos</p>
             </div>
           )}
   
-          {/* Resumen de los valores (Respeto, Igualdad etc.) */}
-          {selectedSensor && historicalData.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-6">
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-                <p className="text-gray-500 text-sm mb-1">Valor Actual</p>
-                <p className="text-2xl font-bold" style={{ color: SENSOR_COLORS[selectedSensor.sensorName.toLowerCase()] || "#2563EB" }}>
-                  {stats.current} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-                <p className="text-gray-500 text-sm mb-1">Promedio</p>
-                <p className="text-2xl font-bold text-gray-700">
-                  {stats.average} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-                <p className="text-gray-500 text-sm mb-1">Mínimo</p>
-                <p className="text-2xl font-bold text-blue-500">
-                  {stats.min} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-                <p className="text-gray-500 text-sm mb-1">Máximo</p>
-                <p className="text-2xl font-bold text-red-500">
-                  {stats.max} <span className="text-sm font-normal text-gray-500">{getSensorUnit()}</span>
-                </p>
-              </div>
-            </div>
-          )}
-  
-          {/* Mensajes de estado */}
-          {selectedSensor && historicalData.length > 0 && (selectedSensor.thresholds?.upper !== undefined || selectedSensor.thresholds?.lower !== undefined) && (
-            <div className="mt-6 p-4 rounded-lg border bg-blue-50 border-blue-200">
-              <h3 className="font-medium mb-2">Estado del sensor</h3>
-              <div className="space-y-2">
-                {selectedSensor.thresholds?.upper !== undefined && stats.current > selectedSensor.thresholds.upper && (
-                  <p className="text-red-600 text-sm flex items-center">
-                    <span className="inline-block w-2 h-2 rounded-full bg-red-500 mr-2"></span>
-                    El valor actual está por encima del umbral máximo ({selectedSensor.thresholds.upper} {getSensorUnit()})
-                  </p>
-                )}
-                {selectedSensor.thresholds?.lower !== undefined && stats.current < selectedSensor.thresholds.lower && (
-                  <p className="text-amber-600 text-sm flex items-center">
-                    <span className="inline-block w-2 h-2 rounded-full bg-amber-500 mr-2"></span>
-                    El valor actual está por debajo del umbral mínimo ({selectedSensor.thresholds.lower} {getSensorUnit()})
-                  </p>
-                )}
-                {((selectedSensor.thresholds?.upper !== undefined && 
-                   selectedSensor.thresholds?.lower !== undefined && 
-                   stats.current <= selectedSensor.thresholds.upper && 
-                   stats.current >= selectedSensor.thresholds.lower) || 
-                  (selectedSensor.thresholds?.upper !== undefined && 
-                   selectedSensor.thresholds?.lower === undefined && 
-                   stats.current <= selectedSensor.thresholds.upper) || 
-                  (selectedSensor.thresholds?.upper === undefined && 
-                   selectedSensor.thresholds?.lower !== undefined && 
-                   stats.current >= selectedSensor.thresholds.lower)) && (
-                  <p className="text-green-600 text-sm flex items-center">
-                    <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                    El sensor está funcionando dentro de los límites normales
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-  
-          {/* Mensaje cuando no hay datos disponibles */}
           {selectedSensor && !historicalData.length && (
             <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-amber-700 text-sm">
@@ -573,9 +538,10 @@ const SelectedDevicePage = () => {
               </p>
             </div>
           )}
-        </div>      
+        </div>
       </div>
-      { openConfigDialog.open && (
+
+      {openConfigDialog.open && (
         <ConfigSensorDialog 
           onClose={() => setOpenConfigDialog({open: false, sensor: null})} 
           sensor={openConfigDialog.sensor} 
@@ -583,7 +549,7 @@ const SelectedDevicePage = () => {
           onSave={handleUpdateThresholds}
         />
       )}
-    </div>
+    </>
   );
 };
 

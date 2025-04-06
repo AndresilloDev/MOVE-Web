@@ -1,3 +1,5 @@
+import dashboard from '../../assets/dashboard.png';
+
 export default function HomePage() {
   return (
     <div className="flex flex-col lg:flex-row items-center min-h-screen w-full p-6 lg:px-12 lg:pb-24 overflow-hidden">
@@ -14,7 +16,7 @@ export default function HomePage() {
       {/* Sección de Imagen */}
       <div className="w-full lg:w-7/12 flex items-center justify-center p-6">
         <img
-          src="../../src/assets/dashboard.png"
+          src={dashboard}
           alt="Monitor"
           className="max-w-full h-auto shadow-2xl rounded-2xl"
         />
