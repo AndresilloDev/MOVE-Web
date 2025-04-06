@@ -12,6 +12,22 @@ export default function NotificationsPage() {
   const deviceId = searchParams.get("deviceId") || "";
   const sensorType = searchParams.get("sensorType") || "";
 
+  const sensorName = () => {switch (sensorType) {
+    case "temperature":
+      return "temperatura";
+    case "humidity":
+      return "humedad";
+    case "co2":
+      return "co2";
+    case "light":
+      return "luz";
+    case "sound":
+      return "sonido";
+    default:
+      return sensorType;
+  }};
+
+
   const { getError } = useNotification();
   const [search, setSearch] = useState("");
   const [notifications, setNotifications] = useState([]);
@@ -22,7 +38,9 @@ export default function NotificationsPage() {
     const fetchNotifications = async () => {
       setLoading(true);
       try {
-        const response = showFiled ? await getFiledNotifications() : await getUnfiledNotifications({deviceId, sensorType});
+        console.log("Fetching notifications...");
+        console.log({deviceId, sensorType: sensorName()});
+        const response = showFiled ? await getFiledNotifications() : await getUnfiledNotifications({deviceId, sensorType: sensorName()});
         
         const formattedData = await Promise.all(
           response.data.map(async (notification) => {

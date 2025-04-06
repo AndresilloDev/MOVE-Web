@@ -6,7 +6,7 @@ const InputBox = ({ value, setValue, type, label, translateX = "-1.25rem", trans
 
     const handleBlur = (e) => {
         setIsFocused(false);
-        setIsFilled(e.target.value !== ''); 
+        setIsFilled(e.target.value !== '');
     };
 
     return (
