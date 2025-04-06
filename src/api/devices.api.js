@@ -14,6 +14,10 @@ export const updateDevice = async (deviceId, device) => {
     return await api.put(`${endpoint}/${deviceId}`, device);
 };
 
+export const updateSensorThresholds = async (data) => {
+    return await api.put(`${endpoint}/updateThreshold`, data);
+}
+
 export const deleteDevice = async (deviceId) => {
     return await api.delete(`${endpoint}/${deviceId}`);
 };

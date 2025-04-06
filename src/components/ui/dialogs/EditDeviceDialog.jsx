@@ -34,6 +34,7 @@ const EditDeviceDialog = ({ onClose, onSave, device }) => {
                 return
             };
             const response = await getSpaces(buildingId);
+            // const respone = await getUsers();
             setSpaces(response.data.sort((a, b) => a.name.localeCompare(b.name)));
         } catch (error) {
             console.error("Error fetching spaces:", error);

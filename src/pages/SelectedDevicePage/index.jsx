@@ -5,11 +5,12 @@ import {
   getAllSensorDataInRange,
   listenToSensorUpdates
 } from '../../api/sensorData.api';
-import { getDevice } from '../../api/devices.api';
+import { getDevice, updateSensorThresholds } from '../../api/devices.api';
 import { useNotification } from '../../context/NotificationContext';
 import SensorCard from '../../components/ui/cards/SensorCard';
 import SensorChart from '../../components/ui/SensorChart';
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import ConfigSensorDialog from '../../components/ui/dialogs/ConfigSensorDialog';
 
 // Cositas
 const SENSOR_ORDER = ['temperature', 'humidity', 'co2', 'light', 'sound'];
@@ -32,7 +33,6 @@ const UPDATE_INTERVAL = 5000; // 5 segundos (para que se actualice rapido y most
 const SelectedDevicePage = () => {
   const { id: deviceId } = useParams();
   const navigate = useNavigate();
-  const { showError, showSuccess } = useNotification();
   
   // Estados principales
   const [sensors, setSensors] = useState([]);
@@ -45,11 +45,18 @@ const SelectedDevicePage = () => {
   });
   const [isDataLoading, setIsDataLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+
+  const [openConfigDialog, setOpenConfigDialog] = useState({
+    open: false,
+    sensor: null
+  });
   
   // Referencias para el slider
   const scrollContainerRef = useRef(null);
   const leftArrowRef = useRef(null);
   const rightArrowRef = useRef(null);
+
+  const { getError, getSuccess } = useNotification();
 
   // Ordenamos los sensores según orden (para evitar q el map ponga lo q se le inchen lo huevo)
   const sortedSensors = useMemo(() => {
@@ -118,7 +125,7 @@ const SelectedDevicePage = () => {
         setLastUpdated(new Date());
       } catch (err) {
         console.error("Error al cargar los datos del dispositivo:", err);
-        showError('No se pudo cargar la información del dispositivo');
+        getError('No se pudo cargar la información del dispositivo');
         navigate('/devices');
       }
     };
@@ -175,7 +182,7 @@ const SelectedDevicePage = () => {
       clearInterval(updateInterval);
       unsubscribe();
     };
-  }, [deviceId, navigate, showError, selectedSensor]);
+  }, [deviceId, navigate, getError, selectedSensor]);
 
   // Obtenemos datos históricos cuando cambia el sensor o el rango de fechas
   useEffect(() => {
@@ -185,15 +192,25 @@ const SelectedDevicePage = () => {
       setIsDataLoading(true);
       
       try {
-        // Convertimos las fechas locales a ISO
-        const start = new Date(dateRange.startDate).toISOString();
-        const end = new Date(dateRange.endDate).toISOString();
+        const startD = new Date(dateRange.startDate);
+        const endD = new Date(dateRange.endDate);        
+        startD.setDate(startD.getDate() - 1);
+        endD.setDate(endD.getDate() - 1); 
+
+        const start = startD.toISOString();
+        const end = endD.toISOString();
+
+        console.log("Fechas seleccionadas");
+        console.log("Inicio:", start);
+        console.log("Fin:", end);
         
         const response = await getAllSensorDataInRange(deviceId, {
           start,
           end,
           sensorName: selectedSensor?.sensorName
         });
+
+        console.log("Respuesta de datos históricos:", response.data);
     
         if (response.data && response.data.length > 0) {
           const sensorData = response.data[0];
@@ -225,14 +242,14 @@ const SelectedDevicePage = () => {
         }
       } catch (err) {
         console.error("Error al cargar datos históricos:", err);
-        showError('No se pudieron cargar los datos históricos');
+        getError('No se pudieron cargar los datos históricos');
       } finally {
         setIsDataLoading(false);
       }
     };
     
     fetchHistoricalData();
-  }, [selectedSensor, dateRange.startDate, dateRange.endDate, deviceId, showError]);
+  }, [selectedSensor, dateRange.startDate, dateRange.endDate, deviceId, getError]);
 
   // Control de navegación del slider
   useEffect(() => {
@@ -298,6 +315,19 @@ const SelectedDevicePage = () => {
     });
   }, []);
 
+  const formatedDateFormejico = (dateStr) => {
+    const date = new Date(dateStr);
+
+    date.setHours(date.getHours() - 6);const year = date.getFullYear();
+
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+  
+    return `${year}-${month}-${day}T${hour}:${minute}`;
+};
+
   const getSensorUnit = useCallback(() => {
     if (!selectedSensor) return '';
     return SENSOR_UNITS[selectedSensor.sensorName.toLowerCase()] || '';
@@ -328,6 +358,22 @@ const SelectedDevicePage = () => {
     
     return nameMap[sensorName.toLowerCase()] || sensorName;
   }, []);
+
+
+  const handleUpdateThresholds = async (data) => {
+    try {
+        const response = await updateSensorThresholds(data);
+        console.log("Respuesta de actualización de umbrales:", response.data);
+        if (response.status !== 200) 
+            throw new Error("Error al actualizar los umbrales del sensor");
+          
+        getSuccess("Umbrales actualizados correctamente");
+        setOpenConfigDialog({ open: false, sensor: null });
+    } catch (error) {
+        console.error(error);
+        getError("Error al actualizar umbrales");
+    }
+};
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -370,9 +416,10 @@ const SelectedDevicePage = () => {
                   <div key={sensor.id || `sensor-${Math.random()}`} className="flex-shrink-0">
                     <SensorCard 
                       sensor={sensor} 
-                      isSelected={selectedSensor && selectedSensor.id === sensor.id}
+                      isSelected={selectedSensor && selectedSensor._id === sensor._id}
                       onClick={() => handleSensorSelect(sensor)}
                       className="w-64 h-full"
+                      onConfig={setOpenConfigDialog}
                     />
                   </div>
                 ))}
@@ -415,7 +462,7 @@ const SelectedDevicePage = () => {
                 <input
                   id="start-date"
                   type="datetime-local"
-                  value={dateRange.startDate}
+                  value={dateRange.startDate ? formatedDateFormejico(dateRange.startDate) : ''}
                   onChange={(e) => handleDateChange('startDate', e.target.value)}
                   className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -426,7 +473,7 @@ const SelectedDevicePage = () => {
                 <input
                   id="end-date"
                   type="datetime-local"
-                  value={dateRange.endDate}
+                  value={dateRange.endDate ? formatedDateFormejico(dateRange.endDate) : ''}
                   onChange={(e) => handleDateChange('endDate', e.target.value)}
                   className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
@@ -526,6 +573,14 @@ const SelectedDevicePage = () => {
           )}
         </div>      
       </div>
+      { openConfigDialog.open && (
+        <ConfigSensorDialog 
+          onClose={() => setOpenConfigDialog({open: false, sensor: null})} 
+          sensor={openConfigDialog.sensor} 
+          deviceId={deviceId}
+          onSave={handleUpdateThresholds}
+        />
+      )}
     </div>
   );
 };

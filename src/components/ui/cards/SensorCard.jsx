@@ -3,7 +3,7 @@ import { GaugeComponent } from 'react-gauge-component';
 import { Bell, Settings } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const SensorCard = ({ sensor, thresholds, className, isSelected, onClick }) => {
+const SensorCard = ({ sensor, thresholds, className, isSelected, onClick, onConfig }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -144,8 +144,11 @@ const SensorCard = ({ sensor, thresholds, className, isSelected, onClick }) => {
             <Bell className="w-5 h-5 text-gray-600" />
           </button>
           <button 
-            className="p-2 rounded-full hover:bg-gray-100 transition"
+            className="p-2 rounded-full hover:bg-gray-100 z-1000 transition"
             title="Configuración"
+            onClick={() => {
+              onConfig({open: true, sensor: sensor});
+            }}
           >
             <Settings className="w-5 h-5 text-gray-600" />
           </button>
