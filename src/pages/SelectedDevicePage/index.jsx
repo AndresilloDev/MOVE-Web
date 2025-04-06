@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   getDeviceSensors,
   getAllSensorDataInRange,
-  listenToSensorUpdates
+  listenToSensorUpdates,
+  updateSensorThresholds
 } from '../../api/sensorData.api';
-import { getDevice, updateSensorThresholds } from '../../api/devices.api';
+import { getDevice } from '../../api/devices.api';
 import { useNotification } from '../../context/NotificationContext';
 import SensorCard from '../../components/ui/cards/SensorCard';
 import SensorChart from '../../components/ui/SensorChart';
@@ -362,7 +363,8 @@ const SelectedDevicePage = () => {
 
   const handleUpdateThresholds = async (data) => {
     try {
-        const response = await updateSensorThresholds(data);
+      console.log("Datos para actualizar umbrales:", data.thresholds);
+        const response = await updateSensorThresholds(deviceId, data.sensor, data.thresholds);
         console.log("Respuesta de actualización de umbrales:", response.data);
         if (response.status !== 200) 
             throw new Error("Error al actualizar los umbrales del sensor");

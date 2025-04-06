@@ -40,7 +40,7 @@ export default function NotificationsPage() {
       try {
         console.log("Fetching notifications...");
         console.log({deviceId, sensorType: sensorName()});
-        const response = showFiled ? await getFiledNotifications() : await getUnfiledNotifications({deviceId, sensorType: sensorName()});
+        const response = showFiled ? await getFiledNotifications() : await getUnfiledNotifications({deviceId, sensor: sensorName()});
         
         const formattedData = await Promise.all(
           response.data.map(async (notification) => {

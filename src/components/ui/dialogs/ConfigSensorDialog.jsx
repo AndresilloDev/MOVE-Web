@@ -41,13 +41,18 @@ const ConfigSensorDialog = ({ onClose, sensor, deviceId, onSave }) => {
             getError("Los umbrales no pueden estar vacíos");
             return;
         }
-
-        console.log(sensor);
-        console.log(lowerThreshold, upperThreshold);
+        
+        console.log({
+            device: deviceId,
+            sensor: sensor._id,
+            thresholds: {
+                lower: parseFloat(lowerThreshold),
+                upper: parseFloat(upperThreshold),
+            }});
 
         onSave({
             device: deviceId,
-            sensorName: sensor.name,
+            sensor: sensor._id,
             thresholds: {
                 lower: parseFloat(lowerThreshold),
                 upper: parseFloat(upperThreshold),

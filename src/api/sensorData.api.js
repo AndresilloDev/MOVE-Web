@@ -11,6 +11,10 @@ export const getDeviceSensors = async (deviceId) => {
     return await api.get(`${endpoint}/${deviceId}/sensors`);
 };
 
+export const updateSensorThresholds = async (deviceId, sensorId, thresholds) => {
+    return await api.put(`${endpoint}/${deviceId}/sensors/${sensorId}/updateSensorThresholds`, {thresholds});
+};
+
 export const getAllSensorDataInRange = async (deviceId, params) => {
     const { start, end, sensorName } = params || {};
     
