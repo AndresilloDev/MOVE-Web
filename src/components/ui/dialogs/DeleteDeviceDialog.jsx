@@ -35,7 +35,7 @@ const DeleteDeviceDialog = ({ onClose, onDelete, deviceName }) => {
         {/* Botones */}
         <div className="flex justify-center gap-4 mt-12">
           <ButtonBox text="Cancelar" onClick={onClose} className="px-12 bg-transparent hover:bg-secondary border border-black" />
-          <ButtonBox text="Eliminar" onClick={onDelete} className="px-12" />
+          <ButtonBox text="Eliminar" onClick={onDelete} className="px-12" loadingType="redirect" />
         </div>
       </motion.div>
     </div>

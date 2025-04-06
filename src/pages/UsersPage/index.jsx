@@ -92,17 +92,30 @@ const UsersPage = () => {
     };
 
     const handleAddUser = async (userData) => {
+        console.log("🚀 Registrando usuario con datos:", userData);
         try {
-            await register(userData);
-            await handleConfirmEmail(userData.user);
+            const response = await register(userData);
+            console.log("✅ Usuario registrado:", response);
+    
+            try {
+                const confirm = await handleConfirmEmail(userData.user);
+                console.log("📧 Confirmación de email exitosa:", confirm);
+            } catch (confirmError) {
+                console.warn("⚠️ Error en confirmación de email:", confirmError.response?.data || confirmError.message);
+            }
+    
             const updatedUsers = await getUsers();
+            console.log("📥 Usuarios actualizados:", updatedUsers);
             setUsers(Array.isArray(updatedUsers.data) ? updatedUsers.data : []);
             closeAddModal();
             getSuccess("Usuario creado correctamente");
-        } catch {
+        } catch (error) {
+            console.error("❌ Error al crear el usuario:", error.response?.data || error.message);
             getError("Error al crear el usuario");
         }
     };
+    
+    
 
     return (
         <div className="space-y-4">
@@ -246,7 +259,7 @@ const UsersPage = () => {
                         <ButtonBox 
                             text="Eliminar" 
                             onClick={handleDeleteUser} 
-                            className="px-6 bg-red-500 hover:bg-red-600 text-white" 
+                            className="px-6 bg-action-primary hover:bg-action-hover text-black" 
                         />
                     </div>
                 </>

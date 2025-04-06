@@ -51,7 +51,7 @@ export const AddBuildingDialog = ({ onClose, onSave }) => {
 
                 <div className="flex justify-center gap-4 mt-8 sm:mt-12">
                     <ButtonBox text="Cancelar" onClick={onClose} className="px-6 sm:px-12 bg-transparent hover:bg-secondary border border-black" />
-                    <ButtonBox text="Guardar" onClick={handleSave} className="px-6 sm:px-12" />
+                    <ButtonBox text="Guardar" onClick={handleSave} className="px-6 sm:px-12" loadingType="redirect" />
                 </div>
             </motion.div>
         </div>
