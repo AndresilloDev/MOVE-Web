@@ -139,7 +139,7 @@ const SensorCard = ({ sensor, thresholds, className, isSelected, onClick, onConf
           <button 
             className="p-2 rounded-full hover:bg-gray-100 transition"
             title="Notificaciones"
-            onClick={() => navigate('/notifications?deviceId=' + deviceId+"sensorType="+sensor.sensorName)}
+            onClick={() => navigate('/notifications?deviceId=' + deviceId+"&sensorType="+sensor.sensorName)}
           >
             <Bell className="w-5 h-5 text-gray-600" />
           </button>
