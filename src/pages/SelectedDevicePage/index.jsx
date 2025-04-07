@@ -336,9 +336,24 @@ const SelectedDevicePage = () => {
     try {
       console.log("Datos para actualizar umbrales:", data.thresholds);
         const response = await updateSensorThresholds(deviceId, data.sensor, data.thresholds);
-        console.log("Respuesta de actualización de umbrales:", response.data);
         if (response.status !== 200) 
             throw new Error("Error al actualizar los umbrales del sensor");
+
+        console.log(data)
+        console.log("Respuesta de la API:", response.data);
+        console.log("Datos del sensor:", data.sensor);
+        console.log("Umbrales:", data.thresholds);
+        console.log("Antiguos sensores:", sensors);
+
+        setSensors((prevSensors) =>
+            prevSensors.map((sensor) =>
+                sensor._id === data.sensor
+                    ? { ...sensor, thresholds: data.thresholds }
+                    : sensor
+            )
+        );
+
+        console.log("Umbrales actualizados:", sensors);
           
         getSuccess("Umbrales actualizados correctamente");
         setOpenConfigDialog({ open: false, sensor: null });
@@ -387,7 +402,7 @@ const SelectedDevicePage = () => {
             >
               <div className="flex gap-6 min-w-max px-8 items-center">
                 {sortedSensors.map(sensor => (
-                  <div key={sensor.id} className="flex-shrink-0">
+                  <div key={sensor._id} className="flex-shrink-0">
                     <SensorCard 
                       sensor={sensor} 
                       isSelected={selectedSensor?._id === sensor._id}
